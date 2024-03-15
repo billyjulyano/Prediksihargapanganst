@@ -4,3 +4,4 @@ matplotlib==3.8.3
 numpy==1.26.4
 altair==5.2.0
 openpyxl==3.1.2
+plost
