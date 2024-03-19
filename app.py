@@ -1,12 +1,18 @@
+import function as mf
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import altair as alt
+from pytorch_forecasting import TemporalFusionTransformer
+import warnings
+warnings.filterwarnings("ignore")
 
-data = pd.read_excel('sample_data.xlsx')
-data['Tanggal'] = pd.to_datetime(data['Tanggal'])
+
 st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto')
+
+model = mf.model_import('model.ckpt')
+data = mf.excel_import('sample_data.xlsx')
 
 st.sidebar.image ('logobapanas.jpg')
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
