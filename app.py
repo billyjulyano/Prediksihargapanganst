@@ -160,5 +160,17 @@ def create_chart_stok(df):
 datastok=create_chart_stok(df_stok)
 st.altair_chart((datastok).interactive(), use_container_width=True)
     
-
+st.subheader('Prediksi', divider='blue', anchor = '3')
  
+with st.form("prediksi"):
+
+    pilihjenis = st.selectbox(
+        "Pilih Jenis",
+        ("BerasPremium", "BerasMedium",),
+        placeholder="Pilih",
+        )
+    st.write('Pilihan:', option)
+    tanggal_awal_prediksi = data['Tanggal'].min()
+    submitted = st.form_submit_button("Submit")
+    if submitted:
+        pass
