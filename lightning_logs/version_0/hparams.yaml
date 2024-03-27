@@ -1,0 +1,343 @@
+attention_head_size: 4
+categorical_groups: {}
+causal_attention: true
+dropout: 0.3
+embedding_labels:
+  Day_Str:
+    Fri: 0
+    Mon: 1
+    Sat: 2
+    Sun: 3
+    Thu: 4
+    Tue: 5
+    Wed: 6
+  Month_Str:
+    Apr: 0
+    Aug: 1
+    Dec: 2
+    Feb: 3
+    Jan: 4
+    Jul: 5
+    Jun: 6
+    Mar: 7
+    May: 8
+    Nov: 9
+    Oct: 10
+    Sep: 11
+  jenis:
+    BerasMedium: 0
+    BerasPremium: 1
+  occasion:
+    '-': 0
+    H+1-HRI: 1
+    H+1-IDA: 2
+    H+1-IDF: 3
+    H+1-NY: 4
+    H+10-IDF: 5
+    H+11-IDF: 6
+    H+12-IDF: 7
+    H+13-IDF: 8
+    H+14-IDF: 9
+    H+2-HRI: 10
+    H+2-IDA: 11
+    H+2-IDF: 12
+    H+2-NY: 13
+    H+3-HRI: 14
+    H+3-IDA: 15
+    H+3-IDF: 16
+    H+3-NY: 17
+    H+4-HRI: 18
+    H+4-IDA: 19
+    H+4-IDF: 20
+    H+4-NY: 21
+    H+5-HRI: 22
+    H+5-IDA: 23
+    H+5-IDF: 24
+    H+5-NY: 25
+    H+6-HRI: 26
+    H+6-IDA: 27
+    H+6-IDF: 28
+    H+6-NY: 29
+    H+7-HRI: 30
+    H+7-IDA: 31
+    H+7-IDF: 32
+    H+7-NY: 33
+    H+8-IDF: 34
+    H+9-IDF: 35
+    H-1-HRI: 36
+    H-1-IDA: 37
+    H-1-IDF: 38
+    H-1-NY: 39
+    H-10-IDF: 40
+    H-10-NY: 41
+    H-11-IDF: 42
+    H-11-NY: 43
+    H-12-IDF: 44
+    H-12-NY: 45
+    H-13-IDF: 46
+    H-13-NY: 47
+    H-14-IDF: 48
+    H-14-NY: 49
+    H-15-IDF: 50
+    H-15-NY: 51
+    H-16-IDF: 52
+    H-17-IDF: 53
+    H-18-IDF: 54
+    H-19-IDF: 55
+    H-2-HRI: 56
+    H-2-IDA: 57
+    H-2-IDF: 58
+    H-2-NY: 59
+    H-20-IDF: 60
+    H-21-IDF: 61
+    H-22-IDF: 62
+    H-23-IDF: 63
+    H-24-IDF: 64
+    H-25-IDF: 65
+    H-26-IDF: 66
+    H-27-IDF: 67
+    H-28-IDF: 68
+    H-29-IDF: 69
+    H-3-HRI: 70
+    H-3-IDA: 71
+    H-3-IDF: 72
+    H-3-NY: 73
+    H-30-IDF: 74
+    H-31-IDF: 75
+    H-32-IDF: 76
+    H-33-IDF: 77
+    H-34-IDF: 78
+    H-35-IDF: 79
+    H-36-IDF: 80
+    H-37-IDF: 81
+    H-4-HRI: 82
+    H-4-IDA: 83
+    H-4-IDF: 84
+    H-4-NY: 85
+    H-5-HRI: 86
+    H-5-IDA: 87
+    H-5-IDF: 88
+    H-5-NY: 89
+    H-6-HRI: 90
+    H-6-IDA: 91
+    H-6-IDF: 92
+    H-6-NY: 93
+    H-7-HRI: 94
+    H-7-IDA: 95
+    H-7-IDF: 96
+    H-7-NY: 97
+    H-8-IDF: 98
+    H-8-NY: 99
+    H-9-IDF: 100
+    H-9-NY: 101
+    H-HRI: 102
+    H-IDA: 103
+    H-IDF: 104
+    H-NY: 105
+embedding_paddings: []
+embedding_sizes:
+  Day_Str: !!python/tuple
+  - 7
+  - 5
+  Month_Str: !!python/tuple
+  - 12
+  - 6
+  jenis: !!python/tuple
+  - 2
+  - 1
+  occasion: !!python/tuple
+  - 106
+  - 22
+hidden_continuous_size: 8
+hidden_continuous_sizes: {}
+hidden_size: 8
+learning_rate: 0.001249129450133166
+log_gradient_flow: false
+log_interval: 10
+log_val_interval: 10
+lstm_layers: 1
+max_encoder_length: 60
+monotone_constaints: {}
+optimizer: Ranger
+optimizer_params: null
+output_size: 7
+output_transformer: !!python/object:pytorch_forecasting.data.encoders.GroupNormalizer
+  center: true
+  groups:
+  - jenis
+  method: standard
+  method_kwargs: {}
+  missing_:
+    center: 12120.470402396302
+    scale: 767.7301707865574
+  norm_: !!python/object:pandas.core.frame.DataFrame
+    _flags:
+      allows_duplicate_labels: true
+    _metadata: []
+    _mgr: !!python/object/apply:pandas.core.internals.managers.BlockManager
+    - !!python/tuple
+      - !!python/object/apply:pandas._libs.internals._unpickle_block
+        - !!python/object/apply:numpy.core.multiarray._reconstruct
+          args:
+          - &id001 !!python/name:numpy.ndarray ''
+          - !!python/tuple
+            - 0
+          - !!binary |
+            Yg==
+          state: !!python/tuple
+          - 1
+          - !!python/tuple
+            - 2
+            - 2
+          - !!python/object/apply:numpy.dtype
+            args:
+            - f8
+            - false
+            - true
+            state: !!python/tuple
+            - 3
+            - <
+            - null
+            - null
+            - null
+            - -1
+            - -1
+            - 0
+          - false
+          - !!binary |
+            HNC3mlojxkD3y5LRHTXJQO+kfZDakIZANWcSN9RqiUA=
+        - !!python/object/apply:builtins.slice
+          - 0
+          - 2
+          - 1
+        - 2
+    - - !!python/object/apply:pandas.core.indexes.base._new_Index
+        - !!python/name:pandas.core.indexes.base.Index ''
+        - data: !!python/object/apply:numpy.core.multiarray._reconstruct
+            args:
+            - *id001
+            - !!python/tuple
+              - 0
+            - !!binary |
+              Yg==
+            state: !!python/tuple
+            - 1
+            - !!python/tuple
+              - 2
+            - !!python/object/apply:numpy.dtype
+              args:
+              - O8
+              - false
+              - true
+              state: !!python/tuple
+              - 3
+              - '|'
+              - null
+              - null
+              - null
+              - -1
+              - -1
+              - 63
+            - false
+            - - center
+              - scale
+          name: null
+      - !!python/object/apply:pandas.core.indexes.base._new_Index
+        - !!python/name:pandas.core.indexes.numeric.Int64Index ''
+        - data: !!python/object/apply:numpy.core.multiarray._reconstruct
+            args:
+            - *id001
+            - !!python/tuple
+              - 0
+            - !!binary |
+              Yg==
+            state: !!python/tuple
+            - 1
+            - !!python/tuple
+              - 2
+            - !!python/object/apply:numpy.dtype
+              args:
+              - i8
+              - false
+              - true
+              state: !!python/tuple
+              - 3
+              - <
+              - null
+              - null
+              - null
+              - -1
+              - -1
+              - 0
+            - false
+            - !!binary |
+              AAAAAAAAAAABAAAAAAAAAA==
+          name: jenis
+    _typ: dataframe
+    attrs: {}
+  scale_by_group: false
+  transformation: softplus
+reduce_on_plateau_min_lr: 1.0e-05
+reduce_on_plateau_patience: 4
+reduce_on_plateau_reduction: 2.0
+share_single_variable_networks: false
+static_categoricals:
+- jenis
+static_reals:
+- encoder_length
+- harga_center
+- harga_scale
+time_varying_categoricals_decoder:
+- occasion
+- Day_Str
+- Month_Str
+- Month_Str
+- Day_Str
+time_varying_categoricals_encoder:
+- occasion
+- Day_Str
+- Month_Str
+- Month_Str
+- Day_Str
+time_varying_reals_decoder:
+- days_from_start
+- weeks_from_start
+- months_from_start
+- Dates
+- Year
+- relative_time_idx
+time_varying_reals_encoder:
+- days_from_start
+- weeks_from_start
+- months_from_start
+- Dates
+- Year
+- relative_time_idx
+- StokCBP
+- LuasPanen
+- ProduksiPadi
+- ProduksiBeras
+- harga
+weight_decay: 0.0
+x_categoricals:
+- jenis
+- occasion
+- Day_Str
+- Month_Str
+- Month_Str
+- Day_Str
+x_reals:
+- encoder_length
+- harga_center
+- harga_scale
+- days_from_start
+- weeks_from_start
+- months_from_start
+- Dates
+- Year
+- relative_time_idx
+- StokCBP
+- LuasPanen
+- ProduksiPadi
+- ProduksiBeras
+- harga

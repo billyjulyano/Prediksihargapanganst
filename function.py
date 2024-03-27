@@ -130,3 +130,21 @@ def create_chart_stok(df, jenis_datasupport):
         .add_params(hover)
     )
     return (lines + points + tooltips).interactive()
+
+
+def create_outofsample_base(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
+    encoder_data = final_df[lambda x:x.days_from_start > x.days_from_start.max() - max_encoder_length]
+    end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
+    date_range = pd.date_range(start=merged_df['Tanggal'].iloc[-1], end=end_date)
+    extended_df = pd.DataFrame(date_range, columns=['Tanggal'])
+    extended_df = pd.concat([merged_df, extended_df], ignore_index=True)
+    
+    return encoder_data, extended_df
+
+
+def create_decoder(df, max_prediction_length):
+    decoder_data = df.groupby('jenis').tail(max_prediction_length)
+    decoder_data['occasion'] = '-'
+    decoder_data.fillna(0, inplace=True)
+
+    return decoder_data

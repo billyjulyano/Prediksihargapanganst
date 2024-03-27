@@ -74,13 +74,11 @@ with st.form("stok"):
 
     tanggal_awal = data['Tanggal'].min()
     tanggal_akhir =data['Tanggal'].max()
-    ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = pd.to_datetime('2023-12-01'))
+    ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = tanggal_akhir - datetime.timedelta(days=180))
     ds = pd.to_datetime(ds)
-    de = st.date_input("Tanggal Akhir Historis",min_value=tanggal_awal, max_value=tanggal_akhir, value = pd.to_datetime('2024-01-01'))
+    de = st.date_input("Tanggal Akhir Historis",min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
     de = pd.to_datetime(de)
-    submitted = st.form_submit_button("Submit")
-    if submitted:
-       pass
+    st.form_submit_button("Submit")
 
 df_stok = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
@@ -89,14 +87,23 @@ st.altair_chart((datastok).interactive(), use_container_width=True)
     
 st.subheader('Prediksi', divider='blue', anchor = '3')
  
-with st.form("prediksi"):
 
-    pilihjenis = st.selectbox(
+max_prediction_length = 30
+max_encoder_length = 60
+with st.form("prediksi"):
+    latest_data = data['Tanggal'].max()
+    pilihan_komoditas_prediksi = st.selectbox(
         "Pilih Jenis",
         ("BerasPremium", "BerasMedium",),
         placeholder="Pilih",
         )
-    tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi")
-    submitted = st.form_submit_button("Submit")
-    if submitted:
-        pass
+    tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
+    st.form_submit_button("Submit")
+
+encoder, extended_df = mf.create_outofsample_base(data, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
+extended_df_time = mf.create_time_features(extended_df)
+decoder = mf.create_decoder(extended_df_time, max_prediction_length)
+
+new_prediction_data = pd.concat([encoder, decoder], ignore_index=True)
+new_raw_predictions = model.predict(new_prediction_data, mode="raw", return_x=True, trainer_kwargs={'logger': False})
+print(new_raw_predictions.output)
