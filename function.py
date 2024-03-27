@@ -96,3 +96,37 @@ def create_chart_price_historical(df):
         .add_params(hover)
     )
     return (lines + points + tooltips).interactive()
+
+def create_chart_stok(df, jenis_datasupport):
+    lowest = df[jenis_datasupport].min()
+    highest = df[jenis_datasupport].max()
+    hover = alt.selection_point(
+        fields=["Tanggal"],
+        nearest=True,
+        on="mouseover",
+        empty=False,
+    )
+    lines = (
+        alt.Chart(df)
+        .mark_line()
+        .encode(
+            x="Tanggal",
+            y = alt.Y(jenis_datasupport, scale=alt.Scale(domain=[lowest-10, highest+30])),
+            )       
+        )
+    points = lines.transform_filter(hover).mark_circle(size=100)
+    tooltips = (
+        alt.Chart(df)
+        .mark_rule()
+        .encode(
+            x="Tanggal",
+            y=jenis_datasupport,
+            opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
+            tooltip=[
+                alt.Tooltip("Tanggal", title="Date"),
+                alt.Tooltip(jenis_datasupport, title="Stok"),
+            ],
+        )
+        .add_params(hover)
+    )
+    return (lines + points + tooltips).interactive()

@@ -6,6 +6,7 @@ import numpy as np
 import altair as alt
 from pytorch_forecasting import TemporalFusionTransformer
 from functools import reduce
+import datetime
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -14,7 +15,7 @@ st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_si
 
 model = mf.model_import('samplemodel.ckpt')
 
-# data = mf.excel_import('sample_data.xlsx')
+# import all data
 df_datasupport_monthly = pd.read_excel('datasupport.xlsx')
 df_datasupport_cipinang = pd.read_excel('datasupport.xlsx', sheet_name='DailyCipinang')
 df_occasion = pd.read_excel('datasupport.xlsx', sheet_name='specialdays')
@@ -39,68 +40,30 @@ st.sidebar.markdown('# [Prediksi Model](#3)')
 
 
 st.title('Prediksi Harga Pangan')  
-st.header('Pergerakan historis harga pangan', divider='green')  
+st.header('Pergerakan historis harga pangan', divider='green', anchor = '1')  
 
-with st.form("my_form"):
+with st.form("price_history_form"):
 
-    option = st.selectbox(
+    pilihan_komoditas = st.selectbox(
         "Tipe Komunitas",
         ("BerasPremium", "BerasMedium",),
         placeholder="Pilih",
         )
-    st.write('Pilihan:', option)
     tanggal_awal = data['Tanggal'].min()
-    tanggal_akhir =data['Tanggal'].max()
-    ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = pd.to_datetime('2023-12-01'))
+    tanggal_akhir = data['Tanggal'].max()
+    
+    ds = st.date_input("Tanggal Awal Historis", min_value=tanggal_awal, max_value= tanggal_akhir, value = tanggal_akhir - datetime.timedelta(days=90))
     ds = pd.to_datetime(ds)
-    de = st.date_input("Tanggal Akhir Historis",min_value=tanggal_awal, max_value=tanggal_akhir, value = pd.to_datetime('2024-01-01'))
+    de = st.date_input("Tanggal Akhir Historis", min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
     de = pd.to_datetime(de)
-    submitted = st.form_submit_button("Submit")
-    if submitted:
-       pass
+    st.form_submit_button("Submit")
 
-df_baru = data[(data['jenis'] == option) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
+price_history = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
-st.subheader('Pergerakan Historis Harga Pangan', divider='blue', anchor = '1')
-
-def create_chart_price_historical(df):
-    lowest = df['harga'].min()
-    highest = df['harga'].max()
-    hover = alt.selection_point(
-        fields=["Tanggal"],
-        nearest=True,
-        on="mouseover",
-        empty=False,
-    )
-    lines = (
-        alt.Chart(df)
-        .mark_line()
-        .encode(
-            x="Tanggal",
-            y = alt.Y('harga', scale=alt.Scale(domain=[lowest-10, highest+30])),
-            )       
-        )
-    points = lines.transform_filter(hover).mark_circle(size=100)
-    tooltips = (
-        alt.Chart(df)
-        .mark_rule()
-        .encode(
-            x="Tanggal",
-            y="harga",
-            opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
-            tooltip=[
-                alt.Tooltip("Tanggal", title="Date"),
-                alt.Tooltip("harga", title="Price (IDR)"),
-            ],
-        )
-        .add_params(hover)
-    )
-    return (lines + points + tooltips).interactive()
-
-historychart = mf.create_chart_price_historical(df_baru)
+historychart = mf.create_chart_price_historical(price_history)
 st.altair_chart((historychart).interactive(), use_container_width=True)
     
-
+st.subheader('Pergerakan Historis Data Support', divider='blue', anchor = '2')
 with st.form("stok"):
 
     pilihanstok = st.selectbox(
@@ -108,7 +71,7 @@ with st.form("stok"):
         ("StokCBP", "LuasPanen",),
         placeholder="Pilih",
         )
-    st.write('Pilihan:', option)
+
     tanggal_awal = data['Tanggal'].min()
     tanggal_akhir =data['Tanggal'].max()
     ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = pd.to_datetime('2023-12-01'))
@@ -119,45 +82,9 @@ with st.form("stok"):
     if submitted:
        pass
 
-df_stok = data[(data['jenis'] == option) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
+df_stok = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
-st.subheader('Pergerakan Historis Data Support', divider='blue', anchor = '2')
-
-def create_chart_stok(df):
-    lowest = df[pilihanstok].min()
-    highest = df[pilihanstok].max()
-    hover = alt.selection_point(
-        fields=["Tanggal"],
-        nearest=True,
-        on="mouseover",
-        empty=False,
-    )
-    lines = (
-        alt.Chart(df)
-        .mark_line()
-        .encode(
-            x="Tanggal",
-            y = alt.Y(pilihanstok, scale=alt.Scale(domain=[lowest-10, highest+30])),
-            )       
-        )
-    points = lines.transform_filter(hover).mark_circle(size=100)
-    tooltips = (
-        alt.Chart(df)
-        .mark_rule()
-        .encode(
-            x="Tanggal",
-            y=pilihanstok,
-            opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
-            tooltip=[
-                alt.Tooltip("Tanggal", title="Date"),
-                alt.Tooltip(pilihanstok, title="Stok"),
-            ],
-        )
-        .add_params(hover)
-    )
-    return (lines + points + tooltips).interactive()
-
-datastok=create_chart_stok(df_stok)
+datastok = mf.create_chart_stok(df_stok, pilihanstok)
 st.altair_chart((datastok).interactive(), use_container_width=True)
     
 st.subheader('Prediksi', divider='blue', anchor = '3')
@@ -169,8 +96,7 @@ with st.form("prediksi"):
         ("BerasPremium", "BerasMedium",),
         placeholder="Pilih",
         )
-    st.write('Pilihan:', option)
-    tanggal_awal_prediksi = data['Tanggal'].min()
+    tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi")
     submitted = st.form_submit_button("Submit")
     if submitted:
         pass
