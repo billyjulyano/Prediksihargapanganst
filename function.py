@@ -148,3 +148,51 @@ def create_decoder(df, max_prediction_length):
     decoder_data.fillna(0, inplace=True)
 
     return decoder_data
+
+@st.cache_data()
+def do_pred(_model, prediction_data):
+    new_raw_predictions = _model.predict(prediction_data, mode="raw", return_x=True, trainer_kwargs={'logger': False})
+    raw_result = new_raw_predictions.output.prediction.cpu().numpy()[:,:, 3]
+    return raw_result
+
+
+def filter_prediction(raw_prediction, output_dict, data_type, pred_date_index):
+    filtered = raw_prediction[output_dict[data_type]]
+    df_pred = pd.DataFrame({'Tanggal': pred_date_index, 'Harga Prediksi': filtered})
+    return df_pred
+
+
+
+def create_chart_pred(df):
+    lowest = df['Harga Prediksi'].min()
+    highest = df['Harga Prediksi'].max()
+    hover = alt.selection_point(
+        fields=["Tanggal"],
+        nearest=True,
+        on="mouseover",
+        empty=False,
+    )
+    lines = (
+        alt.Chart(df)
+        .mark_line()
+        .encode(
+            x="Tanggal",
+            y = alt.Y('Harga Prediksi', scale=alt.Scale(domain=[lowest-10, highest+30])),
+            )       
+        )
+    points = lines.transform_filter(hover).mark_circle(size=100)
+    tooltips = (
+        alt.Chart(df)
+        .mark_rule()
+        .encode(
+            x="Tanggal",
+            y='Harga Prediksi',
+            opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
+            tooltip=[
+                alt.Tooltip("Tanggal", title="Date"),
+                alt.Tooltip('Harga Prediksi', title="Harga"),
+            ],
+        )
+        .add_params(hover)
+    )
+    return (lines + points + tooltips).interactive()
