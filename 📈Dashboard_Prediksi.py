@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto')
 
-model = mf.model_import('samplemodel.ckpt')
+model = mf.model_import('samplemodel.ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
 
 # import all data
@@ -32,7 +32,7 @@ df_merged.dropna(inplace=True)
 
 data = mf.create_time_features(df_merged)
 
-st.sidebar.image ('logobapanas.jpg')
+st.sidebar.image('logobapanas.jpg')
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
 
 st.sidebar.markdown('# [Pergerakan Historis](#1)')
@@ -113,3 +113,12 @@ if pred_button:
 
     alt_predchart = mf.create_chart_pred(df_prediction)
     st.altair_chart((alt_predchart).interactive(), use_container_width=True)
+
+st.bar_chart({"data": [1, 5, 2, 6, 2, 1]})
+
+with st.expander("See explanation"):
+    st.write("The chart above shows some numbers I picked for you.I rolled actual dice for these, so they're *guaranteed* tobe random.")
+    st.image("https://static.streamlit.io/examples/dice.jpg")
+
+
+
