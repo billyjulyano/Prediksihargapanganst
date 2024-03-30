@@ -11,7 +11,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto')
+st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
 
 model = mf.model_import('samplemodel.ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
@@ -41,51 +41,7 @@ st.sidebar.markdown('# [Prediksi Model](#3)')
 
 
 st.title('Prediksi Harga Pangan')  
-st.header('Pergerakan historis harga pangan', divider='green', anchor = '1')  
 
-with st.form("price_history_form"):
-
-    pilihan_komoditas = st.selectbox(
-        "Tipe Komunitas",
-        ("BerasPremium", "BerasMedium",),
-        placeholder="Pilih",
-        )
-    tanggal_awal = data['Tanggal'].min()
-    tanggal_akhir = data['Tanggal'].max()
-    
-    ds = st.date_input("Tanggal Awal Historis", min_value=tanggal_awal, max_value= tanggal_akhir, value = tanggal_akhir - datetime.timedelta(days=90))
-    ds = pd.to_datetime(ds)
-    de = st.date_input("Tanggal Akhir Historis", min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
-    de = pd.to_datetime(de)
-    st.form_submit_button("Submit")
-
-price_history = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
-
-alt_historychart = mf.create_chart_price_historical(price_history)
-st.altair_chart((alt_historychart).interactive(), use_container_width=True)
-    
-st.subheader('Pergerakan Historis Data Support', divider='blue', anchor = '2')
-with st.form("stok"):
-
-    pilihanstok = st.selectbox(
-        "Pilih Stok",
-        ("StokCBP", "LuasPanen",),
-        placeholder="Pilih",
-        )
-
-    tanggal_awal = data['Tanggal'].min()
-    tanggal_akhir =data['Tanggal'].max()
-    ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = tanggal_akhir - datetime.timedelta(days=180))
-    ds = pd.to_datetime(ds)
-    de = st.date_input("Tanggal Akhir Historis",min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
-    de = pd.to_datetime(de)
-    st.form_submit_button("Submit")
-
-df_stok = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
-
-alt_datastok = mf.create_chart_stok(df_stok, pilihanstok)
-st.altair_chart((alt_datastok).interactive(), use_container_width=True)
-    
 st.subheader('Prediksi', divider='blue', anchor = '3')
 
 max_prediction_length = 30
@@ -113,12 +69,3 @@ if pred_button:
 
     alt_predchart = mf.create_chart_pred(df_prediction)
     st.altair_chart((alt_predchart).interactive(), use_container_width=True)
-
-st.bar_chart({"data": [1, 5, 2, 6, 2, 1]})
-
-with st.expander("See explanation"):
-    st.write("The chart above shows some numbers I picked for you.I rolled actual dice for these, so they're *guaranteed* tobe random.")
-    st.image("https://static.streamlit.io/examples/dice.jpg")
-
-
-
