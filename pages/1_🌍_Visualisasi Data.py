@@ -29,16 +29,11 @@ df_merged.dropna(inplace=True)
 
 data = mf.create_time_features(df_merged)
 
-st.sidebar.image('logobapanas.jpg')
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
+st.sidebar.image('logogabungan.jpg')
 
-st.sidebar.markdown('# [Pergerakan Historis](#1)')
-st.sidebar.markdown('# [Visualisasi Data](#2)')
-st.sidebar.markdown('# [Prediksi Model](#3)')
-
-
-st.title('Prediksi Harga Pangan')  
-st.header('Pergerakan historis harga pangan', divider='green', anchor = '1')  
+st.title('Visualisasi Data')  
+st.header('Pergerakan Historis Harga Pangan', divider='green', anchor = '1')  
 
 with st.form("price_history_form"):
 
