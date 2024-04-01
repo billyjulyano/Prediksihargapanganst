@@ -37,11 +37,10 @@ st.sidebar.markdown('# [Visualisasi Data](#2)')
 st.sidebar.markdown('# [Prediksi Model](#3)')
 
 
-st.title('Prediksi Harga Pangan')  
-st.header('Pergerakan historis harga pangan', divider='green', anchor = '1')  
+st.title('Visualisasi Data Harga')   
 
 with st.form("price_history_form"):
-
+    st.subheader('Pilih parameter', divider='green', anchor = '1') 
     pilihan_komoditas = st.selectbox(
         "Tipe Komunitas",
         ("BerasPremium", "BerasMedium",),
@@ -59,11 +58,12 @@ with st.form("price_history_form"):
 price_history = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
 alt_historychart = mf.create_chart_price_historical(price_history)
+st.markdown('#### Grafik')
 st.altair_chart((alt_historychart).interactive(), use_container_width=True)
-    
-st.subheader('Pergerakan Historis Data Support', divider='blue', anchor = '2')
-with st.form("stok"):
 
+st.title('Visualisasi Data Support')   
+with st.form("stok"):
+    st.subheader('Pilih parameter', divider='green', anchor = '1') 
     pilihanstok = st.selectbox(
         "Pilih Stok",
         ("StokCBP", "LuasPanen",),
@@ -81,4 +81,5 @@ with st.form("stok"):
 df_stok = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
 alt_datastok = mf.create_chart_stok(df_stok, pilihanstok)
+st.markdown('#### Grafik')
 st.altair_chart((alt_datastok).interactive(), use_container_width=True)
