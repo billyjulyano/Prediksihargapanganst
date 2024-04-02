@@ -26,8 +26,11 @@ page_bg_img = """
 }
 </style>
 """
+with open('style.css') as f:
+    css = f.read()
 
-st.markdown(page_bg_img,unsafe_allow_html=True)
+st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+# st.markdown(page_bg_img,unsafe_allow_html=True)
 
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
 st.sidebar.image('logogabungan.png')
