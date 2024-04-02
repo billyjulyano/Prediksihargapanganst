@@ -30,11 +30,7 @@ df_merged.dropna(inplace=True)
 data = mf.create_time_features(df_merged)
 
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
-
-st.sidebar.markdown('# [Pergerakan Historis](#1)')
-st.sidebar.markdown('# [Visualisasi Data](#2)')
-st.sidebar.markdown('# [Prediksi Model](#3)')
-
+st.sidebar.image('logogabungan.png')
 
 st.title('Visualisasi Data Harga')   
 

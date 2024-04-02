@@ -35,9 +35,12 @@ df_merged.dropna(inplace=True)
 data = mf.create_time_features(df_merged)
 
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
-st.sidebar.image('logogabungan.jpg')
+st.sidebar.image('logogabungan.png')
+
+
 
 st.title('Prediksi Harga Pangan')  
+
 
 max_prediction_length = 30
 max_encoder_length = 60
