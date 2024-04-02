@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
+st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
 
 model = mf.model_import('samplemodel.ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
@@ -34,19 +34,45 @@ df_merged.dropna(inplace=True)
 
 data = mf.create_time_features(df_merged)
 
-st.sidebar.header('Dashboard Prediksi Harga Pangan')
+#headersidebar
+st.sidebar.header('Dashboard Prediksi Harga Pangan') 
+
+#himagesidebar
 st.sidebar.image('logogabungan.png')
 
+page_bg_img = """
+<style>
+[data-testid="stAppViewContainer"] {
+
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: repeat;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 500 500%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient id=%22b%22 gradientTransform=%22rotate(-45 .5 .5)%22%3E%3Cstop offset=%220%25%22 stop-color=%22%2308AEEA%22%2F%3E%3Cstop offset=%22100%25%22 stop-color=%22%232AF598%22%2F%3E%3C%2FlinearGradient%3E%3CclipPath id=%22a%22%3E%3Cpath fill=%22currentColor%22 d=%22M668.5 733Q500 966 289 733t0-464.5q211-231.5 379.5 0t0 464.5Z%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3Cg clip-path=%22url(%23a)%22%3E%3Cpath fill=%22url(%23b)%22 d=%22M668.5 733Q500 966 289 733t0-464.5q211-231.5 379.5 0t0 464.5Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 
 
-st.title('Prediksi Harga Pangan')  
+}
+[data-testid="stSidebarContent"] {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: repeat;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 1000 400%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient id=%22b%22 gradientTransform=%22rotate(-45 .5 .5)%22%3E%3Cstop offset=%220%25%22 stop-color=%22%2308AEEA%22%2F%3E%3Cstop offset=%22100%25%22 stop-color=%22%232AF598%22%2F%3E%3C%2FlinearGradient%3E%3CclipPath id=%22a%22%3E%3Cpath fill=%22currentColor%22 d=%22M658 714q-158 214-405 0t0-370q247-156 405 0t0 370Z%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3Cg clip-path=%22url(%23a)%22%3E%3Cpath fill=%22url(%23b)%22 d=%22M658 714q-158 214-405 0t0-370q247-156 405 0t0 370Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+
+}
+</style>
+"""
+
+st.markdown(page_bg_img,unsafe_allow_html=True)
 
 
 max_prediction_length = 30
 max_encoder_length = 60
 
 with st.form("prediksi"):
-    st.subheader('Set parameter', divider='blue', anchor = '3')
+    st.subheader('Set Parameter', divider='blue', anchor = '3')
     latest_data = data['Tanggal'].max()
     pilihan_komoditas_prediksi = st.selectbox(
         "Pilih Jenis",
