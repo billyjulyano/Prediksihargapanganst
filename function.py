@@ -96,3 +96,103 @@ def create_chart_price_historical(df):
         .add_params(hover)
     )
     return (lines + points + tooltips).interactive()
+
+def create_chart_stok(df, jenis_datasupport):
+    lowest = df[jenis_datasupport].min()
+    highest = df[jenis_datasupport].max()
+    hover = alt.selection_point(
+        fields=["Tanggal"],
+        nearest=True,
+        on="mouseover",
+        empty=False,
+    )
+    lines = (
+        alt.Chart(df)
+        .mark_line()
+        .encode(
+            x="Tanggal",
+            y = alt.Y(jenis_datasupport, scale=alt.Scale(domain=[lowest-10, highest+30])),
+            )       
+        )
+    points = lines.transform_filter(hover).mark_circle(size=100)
+    tooltips = (
+        alt.Chart(df)
+        .mark_rule()
+        .encode(
+            x="Tanggal",
+            y=jenis_datasupport,
+            opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
+            tooltip=[
+                alt.Tooltip("Tanggal", title="Date"),
+                alt.Tooltip(jenis_datasupport, title="Stok"),
+            ],
+        )
+        .add_params(hover)
+    )
+    return (lines + points + tooltips).interactive()
+
+
+def create_outofsample_base(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
+    encoder_data = final_df[lambda x:x.days_from_start > x.days_from_start.max() - max_encoder_length]
+    end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
+    date_range = pd.date_range(start=merged_df['Tanggal'].iloc[-1], end=end_date)
+    extended_df = pd.DataFrame(date_range, columns=['Tanggal'])
+    extended_df = pd.concat([merged_df, extended_df], ignore_index=True)
+    
+    return encoder_data, extended_df
+
+
+def create_decoder(df, max_prediction_length):
+    decoder_data = df.groupby('jenis').tail(max_prediction_length)
+    decoder_data['occasion'] = '-'
+    decoder_data.fillna(0, inplace=True)
+
+    return decoder_data
+
+@st.cache_data()
+def do_pred(_model, prediction_data):
+    new_raw_predictions = _model.predict(prediction_data, mode="raw", return_x=True, trainer_kwargs={'logger': False})
+    raw_result = new_raw_predictions.output.prediction.cpu().numpy()[:,:, 3]
+    return raw_result
+
+
+def filter_prediction(raw_prediction, output_dict, data_type, pred_date_index):
+    filtered = raw_prediction[output_dict[data_type]]
+    df_pred = pd.DataFrame({'Tanggal': pred_date_index, 'Harga Prediksi': filtered})
+    return df_pred
+
+
+
+def create_chart_pred(df):
+    lowest = df['Harga Prediksi'].min()
+    highest = df['Harga Prediksi'].max()
+    hover = alt.selection_point(
+        fields=["Tanggal"],
+        nearest=True,
+        on="mouseover",
+        empty=False,
+    )
+    lines = (
+        alt.Chart(df)
+        .mark_line()
+        .encode(
+            x="Tanggal",
+            y = alt.Y('Harga Prediksi', scale=alt.Scale(domain=[lowest-10, highest+30])),
+            )       
+        )
+    points = lines.transform_filter(hover).mark_circle(size=100)
+    tooltips = (
+        alt.Chart(df)
+        .mark_rule()
+        .encode(
+            x="Tanggal",
+            y='Harga Prediksi',
+            opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
+            tooltip=[
+                alt.Tooltip("Tanggal", title="Date"),
+                alt.Tooltip('Harga Prediksi', title="Harga"),
+            ],
+        )
+        .add_params(hover)
+    )
+    return (lines + points + tooltips).interactive()
