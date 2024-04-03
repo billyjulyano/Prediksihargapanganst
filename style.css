@@ -31,7 +31,8 @@
   }
 
   [data-testid="stArrowVegaLiteChart"] {
-    background-size: cover;
+    
+    background-size: 200px 100px;
     background-color: blue;
     border-radius: 50px; /* Sesuaikan dengan nilai yang Anda inginkan */
     overflow: hidden;
