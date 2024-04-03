@@ -36,7 +36,7 @@ st.title('Visualisasi Data Harga')
 
 # css file
 with open('style.css') as f:
-    css = f.read()
+  css = f.read()
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 with st.form("price_history_form"):
