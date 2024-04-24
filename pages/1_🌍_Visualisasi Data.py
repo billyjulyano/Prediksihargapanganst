@@ -14,20 +14,27 @@ warnings.filterwarnings("ignore")
 st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
 
 # import all data
-df_datasupport_monthly = pd.read_excel('datasupport.xlsx')
-df_datasupport_cipinang = pd.read_excel('datasupport.xlsx', sheet_name='DailyCipinang')
-df_occasion = pd.read_excel('datasupport.xlsx', sheet_name='specialdays')
+df_datasupport_monthly = pd.read_excel('datasupport2.xlsx')
+df_datasupport_monthly = df_datasupport_monthly[['Tanggal','Tahun', 'Bulan', 'ProduksiBeras']]
+df_datasupport_pibc = pd.read_excel('datasupport2.xlsx', sheet_name='DailyCipinang')
+df_occasion = pd.read_excel('datasupport2.xlsx', sheet_name='specialdays')
+df_kurs = pd.read_excel('datasupport.xlsx', sheet_name='kurs2')
+df_kurs = df_kurs.sort_values(by='Tanggal')
+df_kurs = df_kurs[['Kurs Jual', 'Kurs Beli', 'Tanggal']]
 df_price = pd.read_excel('price.xlsx')
 
 df_datasupport_monthly_p = mf.interpolate_df(df_datasupport_monthly)
 df_occasion_p = mf.preprocess_occasion(df_occasion)
+df_kurs = mf.preprocess_kurs(df_kurs)
+df_datasupport_pibc =mf.preprocess_pibc(df_datasupport_pibc)
 
 
-data_frames = [df_datasupport_monthly_p, df_occasion_p, df_price]
+data_frames = [df_datasupport_monthly_p, df_occasion_p, df_datasupport_pibc, df_kurs, df_price]
 df_merged = reduce(lambda left, right: pd.merge(left, right, on=['Tanggal'],how='outer'), data_frames)
 df_merged.dropna(inplace=True)
+df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 
-data = mf.create_time_features(df_merged)
+data = mf.create_time_features_ver2(df_merged)
 
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
 st.sidebar.image('logogabungan.png')
@@ -66,7 +73,7 @@ with st.form("stok"):
     st.subheader('Pilih Parameter', divider='green', anchor = '1') 
     pilihanstok = st.selectbox(
         "Pilih Stok",
-        ("StokCBP", "LuasPanen",),
+        ("StokCipinang", "Kurs", 'ProduksiBeras'),
         placeholder="Pilih",
         )
 

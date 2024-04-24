@@ -32,6 +32,26 @@ def preprocess_occasion(df):
     df = temp_df
     return df
 
+def preprocess_kurs(df):
+    df['Tanggal'] = pd.to_datetime(df['Tanggal'])
+    start_date = df['Tanggal'].min()
+    end_date = df['Tanggal'].max()
+    all_dates = pd.date_range(start=start_date, end=end_date)
+
+    df = df.set_index('Tanggal').reindex(all_dates).reset_index()
+
+    df['Kurs Jual'] = df['Kurs Jual'].interpolate(method='polynomial', order=2)
+    df['Kurs Beli'] = df['Kurs Beli'].interpolate(method='polynomial', order=2)
+    df = df.rename(columns={'index': 'Tanggal'})
+    df = df.rename(columns={'Kurs Beli': 'Kurs'})
+    df = df.drop(columns=['Kurs Jual'])
+    return df
+
+def preprocess_pibc(df):
+    df['Tanggal'] = pd.to_datetime(df['Tanggal'])
+    df = df.drop(columns=['Pemasukan','Pengeluaran','Stok Akhir'])
+    df = df.rename(columns={'Stok Awal': 'StokCipinang'})
+    return df
 
 # Time based features
 def create_time_features(df):
@@ -61,6 +81,24 @@ def create_time_features(df):
 
     time_df['Month_Str'] = time_df['Month'].map(month_mapping)
     time_df['Day_Str'] = time_df['WeekDay'].map(day_mapping)
+    return time_df
+
+def create_time_features_ver2(df):
+    time_df = pd.melt(
+    df,
+    id_vars=['Tanggal', 'Kurs', 'StokCipinang', 'ProduksiBeras', 'occasion'],
+    var_name=["jenis"],
+    value_name="harga",
+    )
+    # day of year
+    time_df['day_of_year'] = time_df['Tanggal'].dt.dayofyear
+
+    # day index
+    time_df['Tanggal'] = pd.to_datetime(time_df['Tanggal'])
+    time_df = time_df.sort_values(by=['jenis', 'Tanggal'])
+    start_Tanggal = time_df.groupby('jenis')['Tanggal'].transform('min')
+    time_df['days_count'] = (time_df['Tanggal'] - start_Tanggal).dt.days
+    time_df['days_count'] += 1
     return time_df
 
 def create_chart_price_historical(df):
@@ -134,6 +172,15 @@ def create_chart_stok(df, jenis_datasupport):
 
 def create_outofsample_base(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
     encoder_data = final_df[lambda x:x.days_from_start > x.days_from_start.max() - max_encoder_length]
+    end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
+    date_range = pd.date_range(start=merged_df['Tanggal'].iloc[-1], end=end_date)
+    extended_df = pd.DataFrame(date_range, columns=['Tanggal'])
+    extended_df = pd.concat([merged_df, extended_df], ignore_index=True)
+    
+    return encoder_data, extended_df
+
+def create_outofsample_base_ver2(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
+    encoder_data = final_df[lambda x:x.days_count > x.days_count.max() - max_encoder_length]
     end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
     date_range = pd.date_range(start=merged_df['Tanggal'].iloc[-1], end=end_date)
     extended_df = pd.DataFrame(date_range, columns=['Tanggal'])
