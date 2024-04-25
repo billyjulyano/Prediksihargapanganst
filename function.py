@@ -53,6 +53,11 @@ def preprocess_pibc(df):
     df = df.rename(columns={'Stok Awal': 'StokCipinang'})
     return df
 
+def to_integer(df, col_list):
+    for col in col_list:
+        df[col_list] = df[col_list].astype(int)
+    return df
+
 # Time based features
 def create_time_features(df):
     time_df = pd.melt(
