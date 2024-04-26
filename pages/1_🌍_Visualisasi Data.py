@@ -1,15 +1,4 @@
-import function as mf
-import pandas as pd
-import streamlit as st
-import matplotlib.pyplot as plt
-import numpy as np
-import altair as alt
-from pytorch_forecasting import TemporalFusionTransformer
-from functools import reduce
-import datetime
-import warnings
-warnings.filterwarnings("ignore")
-
+from common import *
 
 st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
 
@@ -17,18 +6,19 @@ st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_si
 df_datasupport_monthly = pd.read_excel('datasupport2.xlsx')
 df_datasupport_monthly = df_datasupport_monthly[['Tanggal','Tahun', 'Bulan', 'ProduksiBeras']]
 df_datasupport_pibc = pd.read_excel('datasupport2.xlsx', sheet_name='DailyCipinang')
-df_occasion = pd.read_excel('datasupport2.xlsx', sheet_name='specialdays')
+df_occasion = pd.read_excel('datasupport2.xlsx', sheet_name='specialdays2')
 df_kurs = pd.read_excel('datasupport.xlsx', sheet_name='kurs2')
 df_kurs = df_kurs.sort_values(by='Tanggal')
 df_kurs = df_kurs[['Kurs Jual', 'Kurs Beli', 'Tanggal']]
 df_price = pd.read_excel('price.xlsx')
 
+# interpolate and preprocess
 df_datasupport_monthly_p = mf.interpolate_df(df_datasupport_monthly)
 df_occasion_p = mf.preprocess_occasion(df_occasion)
 df_kurs = mf.preprocess_kurs(df_kurs)
-df_datasupport_pibc =mf.preprocess_pibc(df_datasupport_pibc)
+df_datasupport_pibc = mf.preprocess_pibc(df_datasupport_pibc)
 
-
+# merge all data
 data_frames = [df_datasupport_monthly_p, df_occasion_p, df_datasupport_pibc, df_kurs, df_price]
 df_merged = reduce(lambda left, right: pd.merge(left, right, on=['Tanggal'],how='outer'), data_frames)
 df_merged.dropna(inplace=True)

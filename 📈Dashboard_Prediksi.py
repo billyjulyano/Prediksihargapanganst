@@ -1,17 +1,4 @@
-import function as mf
-import pandas as pd
-import streamlit as st
-import matplotlib.pyplot as plt
-import numpy as np
-import altair as alt
-from pytorch_forecasting import TemporalFusionTransformer
-from functools import reduce
-import datetime
-import locale
-import locale;locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
-import warnings
-warnings.filterwarnings("ignore")
-
+from common import *
 
 st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
 
@@ -28,11 +15,13 @@ df_kurs = df_kurs.sort_values(by='Tanggal')
 df_kurs = df_kurs[['Kurs Jual', 'Kurs Beli', 'Tanggal']]
 df_price = pd.read_excel('price.xlsx')
 
+# interpolate and preprocess
 df_datasupport_monthly_p = mf.interpolate_df(df_datasupport_monthly)
 df_occasion_p = mf.preprocess_occasion(df_occasion)
 df_kurs = mf.preprocess_kurs(df_kurs)
-df_datasupport_pibc =mf.preprocess_pibc(df_datasupport_pibc)
+df_datasupport_pibc = mf.preprocess_pibc(df_datasupport_pibc)
 
+# merge all data
 data_frames = [df_datasupport_monthly_p, df_occasion_p, df_datasupport_pibc, df_kurs, df_price]
 df_merged = reduce(lambda left, right: pd.merge(left, right, on=['Tanggal'],how='outer'), data_frames)
 df_merged.dropna(inplace=True)
@@ -58,14 +47,14 @@ with st.form("prediksi"):
     st.subheader('Set Parameter', divider='blue', anchor = '3')
     latest_data = data['Tanggal'].max()
     pilihan_komoditas_prediksi = st.selectbox(
-        "Pilih Jenis",
+        "Pilih Jenis Pangan",
         ("BerasPremium", "BerasMedium",),
         placeholder="Pilih",
         )
     tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
-    pred_button = st.form_submit_button("Run prediction")
+    prediction_button = st.form_submit_button("Run prediction")
 
-if pred_button:
+if prediction_button:
     encoder, extended_df = mf.create_outofsample_base_ver2(data, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
     extended_df_time = mf.create_time_features_ver2(extended_df)
     decoder = mf.create_decoder(extended_df_time, max_prediction_length)
@@ -82,7 +71,6 @@ if pred_button:
     st.altair_chart((alt_predchart).interactive(), use_container_width=True)
 
     st.markdown('##### Matriks')
-
     filtered_data = data[data['jenis'] == pilihan_komoditas_prediksi]
     mean_last_30 = round(filtered_data.tail(30)['harga'].mean())
     mean_pred = round(df_prediction['Harga Prediksi'].mean())

@@ -1,5 +1,4 @@
-import streamlit as st
-from time import sleep
+from common import *
 
 # css file
 with open('style.css') as f:
