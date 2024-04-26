@@ -15,9 +15,9 @@ st.write('#### Using form submission')
 
 # Function to append inputs from form into dataframe
 def add_dfForm():
-    row = pd.DataFrame({'tanggal':[st.session_state.input_df_form_name],
+    row = pd.DataFrame({'tanggal':[st.session_state.input_df_form_date],
             'income':[st.session_state.input_df_form_income],
-            'expense':[st.session_state.input_df_form_expense],
+            'expense':[st.session_state.input_df_form_expense], 
             'net':[st.session_state.input_df_form_income-st.session_state.input_df_form_expense]})
     st.session_state.data = pd.concat([st.session_state.data, row])
 
@@ -26,7 +26,7 @@ dfForm = st.form(key='dfForm', clear_on_submit=True)
 with dfForm:
     dfFormColumns = st.columns(4)
     with dfFormColumns[0]:
-        st.date_input('name')
+        st.date_input('tanggal', key ='input_df_form_date')
     with dfFormColumns[1]:
         st.number_input('income', step=4, key='input_df_form_income')
     with dfFormColumns[2]:
@@ -36,11 +36,3 @@ with dfForm:
     st.form_submit_button(on_click=add_dfForm)
 
 st.write('#### Not using form submission')
-
-# Function to append non-form inputs into dataframe
-def add_df():
-    row = pd.DataFrame({'tanggal':[st.session_state.input_df_name],
-            'income':[st.session_state.input_df_income],
-            'expense':[st.session_state.input_df_expense],
-            'net':[st.session_state.input_df_income-st.session_state.input_df_expense]})
-    st.session_state.data = pd.concat([st.session_state.data, row])
