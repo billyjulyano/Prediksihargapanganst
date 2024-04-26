@@ -41,33 +41,34 @@ if st.session_state['creds']:
 
     num_col_list = ['BerasPremium', 'BerasMedium','ProduksiBeras','StokCipinang','Kurs']
     original_df = mf.to_integer(original_df,num_col_list)
+    st.session_state.updated_df = original_df.tail(5)
 
-    original_df = original_df.tail(5)
-    updated_df = original_df
-
-    input_data =  st.form("input_data_form")
-    latest_date = original_df['Tanggal'].max() + timedelta(days=1)
-    input_data.write(latest_date)
-
-    BerasPremium = input_data.number_input('Insert a number', key = 'BerasPremium', value = 5)
-    BerasMedium = input_data.number_input('Insert a number', key = 'BerasMedium', value = 5)
-    ProduksiBeras = input_data.number_input('Insert a number', key = 'ProduksiBeras', value = 3)
-    StokCipinang = input_data.number_input('Insert a number', key = 'StokCipinang', value = 1)
-    Kurs = input_data.number_input('Insert a number', key = 'Kurs', value = 2)
-    submit = input_data.form_submit_button("Submit")
-    if submit:
-        new_row = {'Tanggal': latest_date,
-                    'ProduksiBeras': ProduksiBeras,
-                    'occasion': '-',
-                    'StokCipinang': StokCipinang,
-                    'Kurs': Kurs,
-                    'BerasPremium': BerasPremium,
-                    'BerasMedium': BerasMedium}
-        updated_df = updated_df.append(new_row, ignore_index=True)
-try:
-    st.data_editor(updated_df, hide_index=True)
-except:
-    st.subheader('tambahkan data terlebih dahulu lalu klik submit')
+    with st.form("input_data_form"):
+        latest_date = original_df['Tanggal'].max() + timedelta(days=1)
+        date_update = st.date_input("Tanggal untuk update", min_value=latest_date, value=latest_date)
+        date_update = pd.to_datetime(date_update)
+        print(type(date_update))
+        BerasPremium = st.number_input('Insert a number', key = 'BerasPremium', value = 5)
+        BerasMedium = st.number_input('Insert a number', key = 'BerasMedium', value = 5)
+        ProduksiBeras = st.number_input('Insert a number', key = 'ProduksiBeras', value = 3)
+        StokCipinang = st.number_input('Insert a number', key = 'StokCipinang', value = 1)
+        Kurs = st.number_input('Insert a number', key='Kurs', value=2)
+        
+        submit = st.form_submit_button("Submit")
+        if submit:
+            new_row = {'Tanggal': date_update,
+                        'ProduksiBeras': ProduksiBeras,
+                        'occasion': '-',
+                        'StokCipinang': StokCipinang,
+                        'Kurs': Kurs,
+                        'BerasPremium': BerasPremium,
+                        'BerasMedium': BerasMedium}
+            st.session_state.updated_df = st.session_state.updated_df.append(new_row, ignore_index=True)
+            # updated_df = updated_df.append(new_row, ignore_index=True)
+    try:
+        st.data_editor(st.session_state.updated_df, hide_index=True)
+    except:
+        st.subheader('tambahkan data terlebih dahulu lalu klik submit')
 
 
 else:
