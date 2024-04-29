@@ -8,7 +8,7 @@ st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
 st.sidebar.image('logogabungan.png')
 
-# st.session_state['creds'] = True
+st.session_state['creds'] = True
 
 if 'creds' not in st.session_state:
     st.session_state['creds'] = False
@@ -58,12 +58,13 @@ if st.session_state['creds']:
         st.session_state.updated_data.tail(5),
         use_container_width=True,
         num_rows='dynamic',
-        disabled=True,
+        # disabled=True,
         column_config={
             "Tanggal": st.column_config.DatetimeColumn(
             format="D MMMM YYYY",
             )
         })
+
     st.session_state.input_df_form_date_latest = st.session_state.updated_data['Tanggal'].max() + timedelta(days=1)
 
     st.write('#### Use form below:')
