@@ -40,8 +40,6 @@ if st.session_state['creds']:
 
     num_col_list = ['BerasPremium', 'BerasMedium','ProduksiBeras','StokCipinang','Kurs']
     original_df = mf.to_integer(original_df,num_col_list)
-
-    st.write('delete row by use check in left of table border')
     # Create an empty dataframe on first page load, will skip on page reloads
     if 'updated_data' not in st.session_state:
         updated_data = pd.DataFrame({'Tanggal': [],
@@ -58,7 +56,9 @@ if st.session_state['creds']:
         st.session_state.updated_data.tail(5),
         use_container_width=True,
         num_rows='dynamic',
-        # disabled=True,
+        # disabled=['Tanggal','ProduksiBeras','occasion','StokCipinang','Kurs','BerasPremium','BerasMedium'],
+        # disabled=['occasion'],
+        disabled = True,
         column_config={
             "Tanggal": st.column_config.DatetimeColumn(
             format="D MMMM YYYY",
@@ -66,6 +66,13 @@ if st.session_state['creds']:
         })
 
     st.session_state.input_df_form_date_latest = st.session_state.updated_data['Tanggal'].max() + timedelta(days=1)
+
+    def delete_lastrow():
+        if (len(st.session_state.updated_data)) > (len(original_df)):
+            st.session_state.updated_data = st.session_state.updated_data[:-1]
+        else:
+            st.toast('Failed, there is no new data!')
+    st.button(':red[Delete last row]', on_click = delete_lastrow)
 
     st.write('#### Use form below:')
 

@@ -88,6 +88,7 @@ with tab2:
         updated_df = st.session_state.updated_data
         updated_df = mf.create_time_features_ver2(updated_df)
         st.write(updated_df.tail(3))
+        st.write(len(updated_df))
         with st.form("prediksi data baru"):
             st.subheader('Set Parameter', divider='blue', anchor = '3')
             latest_data = updated_df['Tanggal'].max()
@@ -105,8 +106,8 @@ with tab2:
             decoder = mf.create_decoder(extended_df_time, max_prediction_length)
 
             new_prediction_data = pd.concat([encoder, decoder], ignore_index=True)
+            
             raw_result = mf.do_pred(model, new_prediction_data)
-
             pred_date_index = decoder[decoder['jenis'] == pilihan_komoditas_prediksi]['Tanggal']
             df_prediction = mf.filter_prediction(raw_result, output_dict, pilihan_komoditas_prediksi, pred_date_index)
 
