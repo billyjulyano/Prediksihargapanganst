@@ -82,40 +82,43 @@ with tab1:
         st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
 
 with tab2:
-    updated_df = st.session_state.updated_data
-    updated_df = mf.create_time_features_ver2(updated_df)
-    st.write(updated_df.tail(3))
-    with st.form("prediksi data baru"):
-        st.subheader('Set Parameter', divider='blue', anchor = '3')
-        latest_data = updated_df['Tanggal'].max()
-        pilihan_komoditas_prediksi = st.selectbox(
-            "Pilih Jenis Pangan",
-            ("BerasPremium", "BerasMedium",),
-            placeholder="Pilih",
-            )
-        tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
-        prediction_button = st.form_submit_button("Run prediction")
+    if 'updated_data' not in st.session_state:
+        st.write('update data first in update page')
+    else:
+        updated_df = st.session_state.updated_data
+        updated_df = mf.create_time_features_ver2(updated_df)
+        st.write(updated_df.tail(3))
+        with st.form("prediksi data baru"):
+            st.subheader('Set Parameter', divider='blue', anchor = '3')
+            latest_data = updated_df['Tanggal'].max()
+            pilihan_komoditas_prediksi = st.selectbox(
+                "Pilih Jenis Pangan",
+                ("BerasPremium", "BerasMedium",),
+                placeholder="Pilih",
+                )
+            tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
+            prediction_button = st.form_submit_button("Run prediction")
 
-    if prediction_button:
-        encoder, extended_df = mf.create_outofsample_base_ver2(updated_df, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
-        extended_df_time = mf.create_time_features_ver2(extended_df)
-        decoder = mf.create_decoder(extended_df_time, max_prediction_length)
+        if prediction_button:
+            encoder, extended_df = mf.create_outofsample_base_ver2(updated_df, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
+            extended_df_time = mf.create_time_features_ver2(extended_df)
+            decoder = mf.create_decoder(extended_df_time, max_prediction_length)
 
-        new_prediction_data = pd.concat([encoder, decoder], ignore_index=True)
-        raw_result = mf.do_pred(model, new_prediction_data)
+            new_prediction_data = pd.concat([encoder, decoder], ignore_index=True)
+            raw_result = mf.do_pred(model, new_prediction_data)
 
-        pred_date_index = decoder[decoder['jenis'] == pilihan_komoditas_prediksi]['Tanggal']
-        df_prediction = mf.filter_prediction(raw_result, output_dict, pilihan_komoditas_prediksi, pred_date_index)
+            pred_date_index = decoder[decoder['jenis'] == pilihan_komoditas_prediksi]['Tanggal']
+            df_prediction = mf.filter_prediction(raw_result, output_dict, pilihan_komoditas_prediksi, pred_date_index)
 
-        alt_predchart = mf.create_chart_pred(df_prediction)
+            alt_predchart = mf.create_chart_pred(df_prediction)
 
-        st.markdown('#### Grafik')
-        st.altair_chart((alt_predchart).interactive(), use_container_width=True)
+            st.markdown('#### Grafik')
+            st.altair_chart((alt_predchart).interactive(), use_container_width=True)
 
-        st.markdown('##### Matriks')
-        filtered_data = updated_df[updated_df['jenis'] == pilihan_komoditas_prediksi]
-        mean_last_30 = round(filtered_data.tail(30)['harga'].mean())
-        mean_pred = round(df_prediction['Harga Prediksi'].mean())
-        
-        percentage_difference = (round(((mean_pred - mean_last_30) / mean_last_30) * 100,1))
-        st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
+            st.markdown('##### Matriks')
+            filtered_data = updated_df[updated_df['jenis'] == pilihan_komoditas_prediksi]
+            mean_last_30 = round(filtered_data.tail(30)['harga'].mean())
+            mean_pred = round(df_prediction['Harga Prediksi'].mean())
+            
+            percentage_difference = (round(((mean_pred - mean_last_30) / mean_last_30) * 100,1))
+            st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
