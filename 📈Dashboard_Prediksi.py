@@ -67,11 +67,26 @@ with tab1:
 
         pred_date_index = decoder[decoder['jenis'] == pilihan_komoditas_prediksi]['Tanggal']
         df_prediction = mf.filter_prediction(raw_result, output_dict, pilihan_komoditas_prediksi, pred_date_index)
+        
+        tab_pred1, tab_pred2 = st.tabs(['Graph', ' Table'])
+        with tab_pred1:
+            st.data_editor(
+            df_prediction,
+            use_container_width=False,
+            disabled = True,
+            column_config={
+                "Tanggal": st.column_config.DatetimeColumn(
+                format="D MMMM YYYY",
+                ),
+                'Harga Prediksi': st.column_config.NumberColumn(
+                    format = '%d'
+                )
+            })
 
         alt_predchart = mf.create_chart_pred(df_prediction)
-
-        st.markdown('#### Grafik')
-        st.altair_chart((alt_predchart).interactive(), use_container_width=True)
+        with tab_pred2:
+            st.markdown('#### Grafik')
+            st.altair_chart((alt_predchart).interactive(), use_container_width=True)
 
         st.markdown('##### Matriks')
         filtered_data = data[data['jenis'] == pilihan_komoditas_prediksi]
@@ -88,7 +103,6 @@ with tab2:
         updated_df = st.session_state.updated_data
         updated_df = mf.create_time_features_ver2(updated_df)
         st.write(updated_df.tail(3))
-        st.write(len(updated_df))
         with st.form("prediksi data baru"):
             st.subheader('Set Parameter', divider='blue', anchor = '3')
             latest_data = updated_df['Tanggal'].max()
@@ -113,8 +127,25 @@ with tab2:
 
             alt_predchart = mf.create_chart_pred(df_prediction)
 
-            st.markdown('#### Grafik')
-            st.altair_chart((alt_predchart).interactive(), use_container_width=True)
+            tab_pred1, tab_pred2 = st.tabs(['Graph', ' Table'])
+            with tab_pred1:
+                st.data_editor(
+                df_prediction,
+                use_container_width=False,
+                disabled = True,
+                column_config={
+                    "Tanggal": st.column_config.DatetimeColumn(
+                    format="D MMMM YYYY",
+                    ),
+                    'Harga Prediksi': st.column_config.NumberColumn(
+                        format = '%d'
+                    )
+                })
+
+            alt_predchart = mf.create_chart_pred(df_prediction)
+            with tab_pred2:
+                st.markdown('#### Grafik')
+                st.altair_chart((alt_predchart).interactive(), use_container_width=True)
 
             st.markdown('##### Matriks')
             filtered_data = updated_df[updated_df['jenis'] == pilihan_komoditas_prediksi]
