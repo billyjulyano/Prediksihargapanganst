@@ -53,7 +53,7 @@ if st.session_state['creds']:
 
     # Show current data
     st.data_editor(
-        st.session_state.updated_data.tail(5),
+        st.session_state.updated_data.tail(7),
         use_container_width=True,
         num_rows='dynamic',
         # disabled=['Tanggal','ProduksiBeras','occasion','StokCipinang','Kurs','BerasPremium','BerasMedium'],
