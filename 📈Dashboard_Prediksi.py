@@ -2,6 +2,26 @@ from common import *
 
 st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
 
+# css file
+with open('style.css') as f:
+    css = f.read()
+st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+
+pages_col = st.columns(4, gap='medium')
+pages_col[0].page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
+pages_col[1].page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
+pages_col[2].page_link("pages/2_🔐_Login.py", label="🔐 Login")
+pages_col[3].page_link("pages/3_📊_Input_Harga.py", label="📊 Input Harga")
+
+st.sidebar.header('Dashboard Prediksi Harga Pangan')
+st.sidebar.image('logogabungan.png')
+
+st.sidebar.write('')
+st.sidebar.page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
+st.sidebar.page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
+st.sidebar.page_link("pages/2_🔐_Login.py", label="🔐 Login")
+st.sidebar.page_link("pages/3_📊_Input_Harga.py", label="📊 Input Harga")
+
 model = mf.model_import('samplemodel_ver2.ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
 
@@ -28,17 +48,6 @@ df_merged.dropna(inplace=True)
 df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 
 data = mf.create_time_features(df_merged)
-
-#headersidebar
-st.sidebar.header('Dashboard Prediksi Harga Pangan') 
-
-#himagesidebar
-st.sidebar.image('logogabungan.png')
-
-# css file
-with open('style.css') as f:
-    css = f.read()
-st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 max_prediction_length = 30
 max_encoder_length = 90
