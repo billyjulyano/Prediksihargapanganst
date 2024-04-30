@@ -58,37 +58,7 @@ def to_integer(df, col_list):
         df[col_list] = df[col_list].astype(int)
     return df
 
-# Time based features
 def create_time_features(df):
-    time_df = pd.melt(
-        df,
-        id_vars=['Tanggal','StokCBP', 'LuasPanen', 'ProduksiPadi', 'ProduksiBeras', 'occasion'],
-        var_name=["jenis"],
-        value_name="harga",
-    )
-    time_df = time_df.sort_values(by=['jenis', 'Tanggal'])
-    time_df['days_from_start'] = time_df.groupby('jenis').cumcount() + 1
-    time_df['weeks_from_start'] = (time_df['days_from_start'] - 1) // 7 + 1
-    time_df['months_from_start'] = (time_df['days_from_start'] - 1) // 30 + 1
-
-    time_df['Tanggal'] = pd.to_datetime(time_df['Tanggal'])
-    time_df.set_index('Tanggal', inplace=True)
-
-    date = time_df.index
-    time_df['Dates'] = date.day
-    time_df['WeekDay'] = date.dayofweek
-    time_df['Month'] = date.month
-    time_df['Year'] = date.year
-    time_df = time_df.reset_index(drop=False)
-
-    month_mapping = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
-    day_mapping = {0: 'Mon', 1: 'Tue', 2: 'Wed', 3: 'Thu', 4: 'Fri', 5: 'Sat', 6: 'Sun'}
-
-    time_df['Month_Str'] = time_df['Month'].map(month_mapping)
-    time_df['Day_Str'] = time_df['WeekDay'].map(day_mapping)
-    return time_df
-
-def create_time_features_ver2(df):
     time_df = pd.melt(
     df,
     id_vars=['Tanggal', 'Kurs', 'StokCipinang', 'ProduksiBeras', 'occasion'],
@@ -174,17 +144,7 @@ def create_chart_stok(df, jenis_datasupport):
     )
     return (lines + points + tooltips).interactive()
 
-
 def create_outofsample_base(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
-    encoder_data = final_df[lambda x:x.days_from_start > x.days_from_start.max() - max_encoder_length]
-    end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
-    date_range = pd.date_range(start=merged_df['Tanggal'].iloc[-1], end=end_date)
-    extended_df = pd.DataFrame(date_range, columns=['Tanggal'])
-    extended_df = pd.concat([merged_df, extended_df], ignore_index=True)
-    
-    return encoder_data, extended_df
-
-def create_outofsample_base_ver2(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
     encoder_data = final_df[lambda x:x.days_count > x.days_count.max() - max_encoder_length]
     end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
     date_range = pd.date_range(start=merged_df['Tanggal'].iloc[-1], end=end_date)
@@ -212,8 +172,6 @@ def filter_prediction(raw_prediction, output_dict, data_type, pred_date_index):
     filtered = raw_prediction[output_dict[data_type]]
     df_pred = pd.DataFrame({'Tanggal': pred_date_index, 'Harga Prediksi': filtered})
     return df_pred
-
-
 
 def create_chart_pred(df):
     lowest = df['Harga Prediksi'].min()
@@ -248,3 +206,26 @@ def create_chart_pred(df):
         .add_params(hover)
     )
     return (lines + points + tooltips).interactive()
+
+def create_table_pred(df):
+    st.data_editor(
+        df,
+        use_container_width=False,
+        disabled = True,
+        column_config={
+            "Tanggal": st.column_config.DatetimeColumn(
+                format="D MMMM YYYY",
+            ),
+            'Harga Prediksi': st.column_config.NumberColumn(
+                format = '%d'
+            )
+        }
+    )
+
+def create_metrics1(data, pilihan_komoditas_prediksi, df_prediction):
+    filtered_data = data[data['jenis'] == pilihan_komoditas_prediksi]
+    mean_last_30 = round(filtered_data.tail(30)['harga'].mean())
+    mean_pred = round(df_prediction['Harga Prediksi'].mean())
+    percentage_difference = (round(((mean_pred - mean_last_30) / mean_last_30) * 100, 1))
+    
+    return percentage_difference, mean_pred

@@ -24,7 +24,7 @@ df_merged = reduce(lambda left, right: pd.merge(left, right, on=['Tanggal'],how=
 df_merged.dropna(inplace=True)
 df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 
-data = mf.create_time_features_ver2(df_merged)
+data = mf.create_time_features(df_merged)
 
 st.sidebar.header('Dashboard Prediksi Harga Pangan')
 st.sidebar.image('logogabungan.png')

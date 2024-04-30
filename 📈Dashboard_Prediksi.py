@@ -27,7 +27,7 @@ df_merged = reduce(lambda left, right: pd.merge(left, right, on=['Tanggal'],how=
 df_merged.dropna(inplace=True)
 df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 
-data = mf.create_time_features_ver2(df_merged)
+data = mf.create_time_features(df_merged)
 
 #headersidebar
 st.sidebar.header('Dashboard Prediksi Harga Pangan') 
@@ -58,8 +58,8 @@ with tab1:
         prediction_button = st.form_submit_button("Run prediction")
 
     if prediction_button:
-        encoder, extended_df = mf.create_outofsample_base_ver2(data, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
-        extended_df_time = mf.create_time_features_ver2(extended_df)
+        encoder, extended_df = mf.create_outofsample_base(data, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
+        extended_df_time = mf.create_time_features(extended_df)
         decoder = mf.create_decoder(extended_df_time, max_prediction_length)
 
         new_prediction_data = pd.concat([encoder, decoder], ignore_index=True)
@@ -70,30 +70,13 @@ with tab1:
         
         tab_pred1, tab_pred2 = st.tabs(['Graph', ' Table'])
         with tab_pred1:
-            st.data_editor(
-            df_prediction,
-            use_container_width=False,
-            disabled = True,
-            column_config={
-                "Tanggal": st.column_config.DatetimeColumn(
-                format="D MMMM YYYY",
-                ),
-                'Harga Prediksi': st.column_config.NumberColumn(
-                    format = '%d'
-                )
-            })
-
-        alt_predchart = mf.create_chart_pred(df_prediction)
-        with tab_pred2:
-            st.markdown('#### Grafik')
+            alt_predchart = mf.create_chart_pred(df_prediction)
             st.altair_chart((alt_predchart).interactive(), use_container_width=True)
+        with tab_pred2:
+            mf.create_table_pred(df_prediction)
 
         st.markdown('##### Matriks')
-        filtered_data = data[data['jenis'] == pilihan_komoditas_prediksi]
-        mean_last_30 = round(filtered_data.tail(30)['harga'].mean())
-        mean_pred = round(df_prediction['Harga Prediksi'].mean())
-        
-        percentage_difference = (round(((mean_pred - mean_last_30) / mean_last_30) * 100,1))
+        percentage_difference, mean_pred = mf.create_metrics1(data, pilihan_komoditas_prediksi, df_prediction)
         st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
 
 with tab2:
@@ -101,8 +84,9 @@ with tab2:
         st.write('update data first in update page')
     else:
         updated_df = st.session_state.updated_data
-        updated_df = mf.create_time_features_ver2(updated_df)
+        updated_df = mf.create_time_features(updated_df)
         st.write(updated_df.tail(3))
+
         with st.form("prediksi data baru"):
             st.subheader('Set Parameter', divider='blue', anchor = '3')
             latest_data = updated_df['Tanggal'].max()
@@ -115,8 +99,8 @@ with tab2:
             prediction_button = st.form_submit_button("Run prediction")
 
         if prediction_button:
-            encoder, extended_df = mf.create_outofsample_base_ver2(updated_df, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
-            extended_df_time = mf.create_time_features_ver2(extended_df)
+            encoder, extended_df = mf.create_outofsample_base(updated_df, df_merged, tanggal_awal_prediksi, max_encoder_length, max_prediction_length)
+            extended_df_time = mf.create_time_features(extended_df)
             decoder = mf.create_decoder(extended_df_time, max_prediction_length)
 
             new_prediction_data = pd.concat([encoder, decoder], ignore_index=True)
@@ -129,28 +113,11 @@ with tab2:
 
             tab_pred1, tab_pred2 = st.tabs(['Graph', ' Table'])
             with tab_pred1:
-                st.data_editor(
-                df_prediction,
-                use_container_width=False,
-                disabled = True,
-                column_config={
-                    "Tanggal": st.column_config.DatetimeColumn(
-                    format="D MMMM YYYY",
-                    ),
-                    'Harga Prediksi': st.column_config.NumberColumn(
-                        format = '%d'
-                    )
-                })
-
-            alt_predchart = mf.create_chart_pred(df_prediction)
-            with tab_pred2:
-                st.markdown('#### Grafik')
+                alt_predchart = mf.create_chart_pred(df_prediction)
                 st.altair_chart((alt_predchart).interactive(), use_container_width=True)
-
+            with tab_pred2:
+                mf.create_table_pred(df_prediction)
+                
             st.markdown('##### Matriks')
-            filtered_data = updated_df[updated_df['jenis'] == pilihan_komoditas_prediksi]
-            mean_last_30 = round(filtered_data.tail(30)['harga'].mean())
-            mean_pred = round(df_prediction['Harga Prediksi'].mean())
-            
-            percentage_difference = (round(((mean_pred - mean_last_30) / mean_last_30) * 100,1))
+            percentage_difference, mean_pred = mf.create_metrics1(data, pilihan_komoditas_prediksi, df_prediction)
             st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
