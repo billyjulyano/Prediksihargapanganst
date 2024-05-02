@@ -1,19 +1,22 @@
-from pytorch_forecasting import TemporalFusionTransformer
+from pytorch_forecasting import TemporalFusionTransformer 
 import streamlit as st
 import pandas as pd
 import altair as alt
 
-@st.cache_resource()
+#impor model
+@st.cache_resource() 
 def model_import(model_name):
     model = TemporalFusionTransformer.load_from_checkpoint(model_name, map_location='cpu')
     return model
 
+#impor exel
 @st.cache_data()
 def excel_import(excel_name):
     dataframe = pd.read_excel(excel_name)
     dataframe['Tanggal'] = pd.to_datetime(dataframe['Tanggal'])
     return dataframe
 
+#interpolasi
 def interpolate_df(df):
     temp_df  = df.copy()
     temp_df.drop(columns=['Tahun','Bulan'],inplace=True)
@@ -24,6 +27,7 @@ def interpolate_df(df):
     df = temp_df
     return df
 
+#memproses hari penting
 def preprocess_occasion(df):
     full_date_range = pd.date_range(start=df['Tanggal'].min(), end=df['Tanggal'].max(), freq='D')
     full_date_df = pd.DataFrame({'Tanggal': full_date_range})
@@ -32,6 +36,7 @@ def preprocess_occasion(df):
     df = temp_df
     return df
 
+#memproses kurs
 def preprocess_kurs(df):
     df['Tanggal'] = pd.to_datetime(df['Tanggal'])
     start_date = df['Tanggal'].min()
@@ -47,18 +52,21 @@ def preprocess_kurs(df):
     df = df.drop(columns=['Kurs Jual'])
     return df
 
+
 def preprocess_pibc(df):
     df['Tanggal'] = pd.to_datetime(df['Tanggal'])
     df = df.drop(columns=['Pemasukan','Pengeluaran','Stok Akhir'])
-    df = df.rename(columns={'Stok Awal': 'StokCipinang'})
+    df = df.rename(columns={'Stok Awal': 'StokCipinang'}) #mengubah nama dari stock awal (diexel) ke stockcipinang
     return df
 
-def to_integer(df, col_list):
+#merubah flot menjadi integer
+def to_integer(df, col_list): 
     for col in col_list:
         df[col_list] = df[col_list].astype(int)
     return df
 
-def create_time_features(df):
+#fitur waktu() days of the year 
+def create_time_features(df): 
     time_df = pd.melt(
     df,
     id_vars=['Tanggal', 'Kurs', 'StokCipinang', 'ProduksiBeras', 'occasion'],
@@ -144,6 +152,7 @@ def create_chart_stok(df, jenis_datasupport):
     )
     return (lines + points + tooltips).interactive()
 
+#penyamaan format data
 def create_outofsample_base(final_df, merged_df, start_date, max_encoder_length, max_prediction_length):
     encoder_data = final_df[lambda x:x.days_count > x.days_count.max() - max_encoder_length]
     end_date = pd.to_datetime(start_date) + pd.DateOffset(days=max_prediction_length)
@@ -153,13 +162,14 @@ def create_outofsample_base(final_df, merged_df, start_date, max_encoder_length,
     
     return encoder_data, extended_df
 
-
+#penyamaan format data
 def create_decoder(df, max_prediction_length):
     decoder_data = df.groupby('jenis').tail(max_prediction_length)
     decoder_data['occasion'] = '-'
     decoder_data.fillna(0, inplace=True)
 
     return decoder_data
+
 
 @st.cache_data()
 def do_pred(_model, prediction_data):

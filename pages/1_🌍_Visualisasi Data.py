@@ -7,7 +7,7 @@ with open('style.css') as f:
     css = f.read()
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
-pages_col = st.columns(4, gap='medium')
+pages_col = st.columns(4)
 pages_col[0].page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
 pages_col[1].page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
 pages_col[2].page_link("pages/2_🔐_Login.py", label="🔐 Login")
