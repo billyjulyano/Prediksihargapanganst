@@ -1,5 +1,5 @@
-import function as mf 
-import pandas as pd
+import function as mf #fungsi
+import pandas as pd #mengola dataframe
 import streamlit as st 
 import matplotlib.pyplot as plt ##buat grafik (x)
 import numpy as np ##perhitungan kalkulasi angka (x)
@@ -9,8 +9,8 @@ from functools import reduce #pegabungan dataframe
 import datetime #pengolahan perubahan tanggal
 import locale #Merubah angka menjadi format mata uang
 import locale;locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
-import warnings #
+import warnings #filter warning
 warnings.filterwarnings("ignore")
-from datetime import timedelta
-from time import sleep
-
+from datetime import timedelta #menghitung selisi suatu hari
+from time import sleep #memberikan waktu 
+from millify import prettify

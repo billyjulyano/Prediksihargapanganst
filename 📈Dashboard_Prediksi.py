@@ -86,7 +86,7 @@ with tab1:
 
         st.markdown('##### Matriks')
         percentage_difference, mean_pred = mf.create_metrics1(data, pilihan_komoditas_prediksi, df_prediction)
-        st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
+        st.metric('Rata-rata harga prediksi', f"Rp{prettify(mean_pred,'.')}", f'{percentage_difference}%')
 
 with tab2:
     if 'updated_data' not in st.session_state:
@@ -129,4 +129,4 @@ with tab2:
                 
             st.markdown('##### Matriks')
             percentage_difference, mean_pred = mf.create_metrics1(data, pilihan_komoditas_prediksi, df_prediction)
-            st.metric('Rata-rata harga prediksi', locale.currency(mean_pred, grouping=True)[:-3], f'{percentage_difference}%')
+            st.metric('Rata-rata harga prediksi', f"Rp{prettify(mean_pred,'.')}", f'{percentage_difference}%')
