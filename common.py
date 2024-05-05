@@ -7,8 +7,8 @@ import altair as alt #chart grafik dengan integrasi streamlit
 from pytorch_forecasting import TemporalFusionTransformer #libary untuk model
 from functools import reduce #pegabungan dataframe
 import datetime #pengolahan perubahan tanggal
-import locale #Merubah angka menjadi format mata uang
-import locale;locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
+# import locale #Merubah angka menjadi format mata uang
+# import locale;locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
 import warnings #filter warning
 warnings.filterwarnings("ignore")
 from datetime import timedelta #menghitung selisi suatu hari
