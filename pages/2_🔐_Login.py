@@ -27,7 +27,7 @@ username = 'a'
 password = '1'
 state = False
 
-st.title('login Data')
+st.title('Login Page')
 
 if 'creds' not in st.session_state:
     st.session_state['creds'] = False

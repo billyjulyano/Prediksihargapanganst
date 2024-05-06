@@ -43,15 +43,17 @@ data_frames = [df_datasupport_monthly_p, df_occasion_p, df_datasupport_pibc, df_
 df_merged = reduce(lambda left, right: pd.merge(left, right, on=['Tanggal'],how='outer'), data_frames)
 df_merged.dropna(inplace=True)
 df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
+num_col_list = ['BerasPremium', 'BerasMedium','ProduksiBeras','StokCipinang','Kurs']
+df_merged = mf.to_integer(df_merged, num_col_list)
 
 data = mf.create_time_features(df_merged)
 
-st.title('Visualisasi Data Harga')   
+st.title('Historical Price Visualization')   
 
 with st.form("price_history_form"):
-    st.subheader('Pilih Parameter', divider='green') 
+    st.subheader('Set Parameter', divider='green') 
     pilihan_komoditas = st.selectbox(
-        "Tipe Komunitas",
+        "Commodity type:",
         ("Beras Premium", "Beras Medium",),
         placeholder="Pilih",
         )
@@ -59,38 +61,38 @@ with st.form("price_history_form"):
     tanggal_awal = data['Tanggal'].min()
     tanggal_akhir = data['Tanggal'].max()
     
-    ds = st.date_input("Tanggal Awal Historis", min_value=tanggal_awal, max_value= tanggal_akhir, value = tanggal_akhir - datetime.timedelta(days=90))
+    ds = st.date_input("Start date:", min_value=tanggal_awal, max_value= tanggal_akhir, value = tanggal_akhir - datetime.timedelta(days=90))
     ds = pd.to_datetime(ds)
-    de = st.date_input("Tanggal Akhir Historis", min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
+    de = st.date_input("End date:", min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
     de = pd.to_datetime(de)
     st.form_submit_button("Submit")
 
 price_history = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
 alt_historychart = mf.create_chart_price_historical(price_history)
-st.markdown('#### Grafik')
+st.markdown('#### Graph')
 st.altair_chart((alt_historychart).interactive(), use_container_width=True)
 
-st.title('Visualisasi Data Support')   
-with st.form("stok"):
-    st.subheader('Pilih Parameter', divider='green', anchor = '1') 
-    pilihanstok = st.selectbox(
-        "Pilih Stok",
+st.title('Historical Data Support Visualization')   
+with st.form("data support"):
+    st.subheader('Set Parameter', divider='green', anchor = '1') 
+    pilihan_datasupport = st.selectbox(
+        "Data support type:",
         ("Stok Beras Cipinang", "Nilai Tukar $/Rp", 'Produksi Beras'),
         placeholder="Pilih",
         )
 
-    pilihanstok = mf.real_key(pilihanstok)
+    pilihan_datasupport = mf.real_key(pilihan_datasupport)
     tanggal_awal = data['Tanggal'].min()
     tanggal_akhir =data['Tanggal'].max()
-    ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = tanggal_akhir - datetime.timedelta(days=180))
+    ds = st.date_input("Start date:",min_value=tanggal_awal, max_value= tanggal_akhir ,value = tanggal_akhir - datetime.timedelta(days=180))
     ds = pd.to_datetime(ds)
-    de = st.date_input("Tanggal Akhir Historis",min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
+    de = st.date_input("End date:",min_value=tanggal_awal, max_value=tanggal_akhir, value = tanggal_akhir)
     de = pd.to_datetime(de)
     st.form_submit_button("Submit")
 
 df_stok = data[(data['jenis'] == pilihan_komoditas) & (data['Tanggal'] >= ds) & (data['Tanggal'] <= de)]
 
-alt_datastok = mf.create_chart_stok(df_stok, pilihanstok)
-st.markdown('#### Grafik')
+alt_datastok = mf.create_chart_datasupport(df_stok, pilihan_datasupport)
+st.markdown('#### Graph')
 st.altair_chart((alt_datastok).interactive(), use_container_width=True)

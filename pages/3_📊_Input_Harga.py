@@ -28,7 +28,7 @@ if 'creds' not in st.session_state:
     st.session_state['creds'] = False
 
 if st.session_state['creds']:
-    st.title('👋🏻 Silahkan Input Harga')
+    st.title('📊 Data update page')
     df_datasupport_monthly = pd.read_excel('datasupport2.xlsx')
     df_datasupport_monthly = df_datasupport_monthly[['Tanggal','Tahun', 'Bulan', 'ProduksiBeras']]
     df_datasupport_pibc = pd.read_excel('datasupport2.xlsx', sheet_name='DailyCipinang')
@@ -69,7 +69,8 @@ if st.session_state['creds']:
     st.data_editor(
         st.session_state.updated_data.tail(7),
         use_container_width=True,
-        num_rows='dynamic',
+        num_rows='fixed',
+        hide_index = True,
         # disabled=['Tanggal','ProduksiBeras','occasion','StokCipinang','Kurs','BerasPremium','BerasMedium'],
         # disabled=['occasion'],
         disabled = True,
@@ -92,7 +93,7 @@ if st.session_state['creds']:
             st.toast('Failed, there is no new data!')
     st.button(':red[Delete last row]', on_click = delete_lastrow)
 
-    st.write('#### Use form below:')
+    st.write('#### Input new row data below:')
 
     # Function to append inputs from form into dataframe
     def add_dfForm():
@@ -123,7 +124,7 @@ if st.session_state['creds']:
             st.number_input('Beras Premium', step=343, key='input_df_form_BP', value = 16991)
         with dfFormColumns[4]:
             st.number_input('Beras Medium', step=242, key='input_df_form_BM', value = 13661)
-        st.form_submit_button(on_click=add_dfForm)
+        st.form_submit_button('Add data',on_click=add_dfForm)
 
 else:
     st.title('Silahkan Login dahulu❕')

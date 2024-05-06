@@ -129,7 +129,9 @@ def create_chart_price_historical(df):
     )
     return (lines + points + tooltips).interactive()
 
-def create_chart_stok(df, jenis_datasupport):
+def create_chart_datasupport(df, jenis_datasupport):
+    unit_dict = {'StokCipinang':'Ton', 'Kurs':'IDR', 'ProduksiBeras':'Ton'}
+
     lowest = df[jenis_datasupport].min()
     highest = df[jenis_datasupport].max()
     hover = alt.selection_point(
@@ -156,7 +158,7 @@ def create_chart_stok(df, jenis_datasupport):
             opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
             tooltip=[
                 alt.Tooltip("Tanggal", title="Date"),
-                alt.Tooltip(jenis_datasupport, title="Stok"),
+                alt.Tooltip(jenis_datasupport, title=unit_dict[jenis_datasupport]),
             ],
         )
         .add_params(hover)
@@ -221,7 +223,7 @@ def create_chart_pred(df):
             opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
             tooltip=[
                 alt.Tooltip("Tanggal", title="Date"),
-                alt.Tooltip('Harga Prediksi', title="Harga"),
+                alt.Tooltip('Harga Prediksi', title="Price"),
             ],
         )
         .add_params(hover)

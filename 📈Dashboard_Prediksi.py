@@ -59,12 +59,12 @@ with tab1:
         st.subheader('Set Parameter', divider='blue', anchor = '3')
         latest_data = data['Tanggal'].max()
         pilihan_komoditas_prediksi = st.selectbox(
-            "Pilih Jenis Pangan",
+            "Commodity type:",
             ("Beras Premium", "Beras Medium",),
             placeholder="Pilih",
             )
         pilihan_komoditas_prediksi = mf.real_key(pilihan_komoditas_prediksi)
-        tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
+        tanggal_awal_prediksi = st.date_input("Prediction start date:", value = latest_data + datetime.timedelta(days=1))
         prediction_button = st.form_submit_button("Run prediction")
 
     if prediction_button:
@@ -77,6 +77,7 @@ with tab1:
 
         pred_date_index = decoder[decoder['jenis'] == pilihan_komoditas_prediksi]['Tanggal']
         df_prediction = mf.filter_prediction(raw_result, output_dict, pilihan_komoditas_prediksi, pred_date_index)
+        df_prediction = mf.to_integer(df_prediction, ['Harga Prediksi'])
         
         tab_pred1, tab_pred2 = st.tabs(['Graph', ' Table'])
         with tab_pred1:
@@ -85,9 +86,9 @@ with tab1:
         with tab_pred2:
             mf.create_table_pred(df_prediction)
 
-        st.markdown('##### Matriks')
+        # st.markdown('##### Matriks')
         percentage_difference, mean_pred = mf.create_metrics1(data, pilihan_komoditas_prediksi, df_prediction)
-        st.metric('Rata-rata harga prediksi', f"Rp{prettify(mean_pred,'.')}", f'{percentage_difference}%')
+        st.metric('Average predicted price', f"Rp{prettify(mean_pred,'.')}", f'{percentage_difference}%')
 
 with tab2:
     if 'updated_data' not in st.session_state:
@@ -98,6 +99,7 @@ with tab2:
         st.data_editor(
             st.session_state.updated_data.tail(3),
             use_container_width=True,
+            hide_index = True,
             disabled = True,
             column_config={
                 "Tanggal": st.column_config.DatetimeColumn(
@@ -113,12 +115,12 @@ with tab2:
             st.subheader('Set Parameter', divider='blue', anchor = '3')
             latest_data = updated_df['Tanggal'].max()
             pilihan_komoditas_prediksi = st.selectbox(
-                "Pilih Jenis Pangan",
+                "Commodity type:",
                 ("Beras Premium", "Beras Medium",),
                 placeholder="Pilih",
                 )
             pilihan_komoditas_prediksi = mf.real_key(pilihan_komoditas_prediksi)
-            tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
+            tanggal_awal_prediksi = st.date_input("Prediction start date:", value = latest_data + datetime.timedelta(days=1))
             prediction_button = st.form_submit_button("Run prediction")
 
         if prediction_button:
@@ -131,8 +133,7 @@ with tab2:
             raw_result = mf.do_pred(model, new_prediction_data)
             pred_date_index = decoder[decoder['jenis'] == pilihan_komoditas_prediksi]['Tanggal']
             df_prediction = mf.filter_prediction(raw_result, output_dict, pilihan_komoditas_prediksi, pred_date_index)
-
-            alt_predchart = mf.create_chart_pred(df_prediction)
+            df_prediction = mf.to_integer(df_prediction, ['Harga Prediksi'])
 
             tab_pred1, tab_pred2 = st.tabs(['Graph', ' Table'])
             with tab_pred1:
@@ -141,6 +142,6 @@ with tab2:
             with tab_pred2:
                 mf.create_table_pred(df_prediction)
                 
-            st.markdown('##### Matriks')
+            # st.markdown('##### Matriks')
             percentage_difference, mean_pred = mf.create_metrics1(data, pilihan_komoditas_prediksi, df_prediction)
-            st.metric('Rata-rata harga prediksi', f"Rp{prettify(mean_pred,'.')}", f'{percentage_difference}%')
+            st.metric('Average predicted price', f"Rp{prettify(mean_pred,'.')}", f'{percentage_difference}%')
