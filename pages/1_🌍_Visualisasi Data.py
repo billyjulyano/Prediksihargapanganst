@@ -49,7 +49,7 @@ data = mf.create_time_features(df_merged)
 st.title('Visualisasi Data Harga')   
 
 with st.form("price_history_form"):
-    st.subheader('Pilih Parameter', divider='green', anchor = '1') 
+    st.subheader('Pilih Parameter', divider='green') 
     pilihan_komoditas = st.selectbox(
         "Tipe Komunitas",
         ("BerasPremium", "BerasMedium",),
