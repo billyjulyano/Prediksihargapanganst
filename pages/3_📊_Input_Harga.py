@@ -75,8 +75,12 @@ if st.session_state['creds']:
         disabled = True,
         column_config={
             "Tanggal": st.column_config.DatetimeColumn(
-            format="D MMMM YYYY",
-            )
+            format="D MMMM YYYY"),
+            'ProduksiBeras': 'Produksi Beras',
+            'occasion': 'Hari Spesial',
+            'StokCipinang': 'Stok PIBC',
+            'BerasPremium': 'Beras Premium',
+            'BerasMedium':'Beras Medium'
         })
 
     st.session_state.input_df_form_date_latest = st.session_state.updated_data['Tanggal'].max() + timedelta(days=1)

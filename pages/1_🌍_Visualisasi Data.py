@@ -52,9 +52,10 @@ with st.form("price_history_form"):
     st.subheader('Pilih Parameter', divider='green') 
     pilihan_komoditas = st.selectbox(
         "Tipe Komunitas",
-        ("BerasPremium", "BerasMedium",),
+        ("Beras Premium", "Beras Medium",),
         placeholder="Pilih",
         )
+    pilihan_komoditas = mf.real_key(pilihan_komoditas)
     tanggal_awal = data['Tanggal'].min()
     tanggal_akhir = data['Tanggal'].max()
     
@@ -75,10 +76,11 @@ with st.form("stok"):
     st.subheader('Pilih Parameter', divider='green', anchor = '1') 
     pilihanstok = st.selectbox(
         "Pilih Stok",
-        ("StokCipinang", "Kurs", 'ProduksiBeras'),
+        ("Stok Beras Cipinang", "Nilai Tukar $/Rp", 'Produksi Beras'),
         placeholder="Pilih",
         )
 
+    pilihanstok = mf.real_key(pilihanstok)
     tanggal_awal = data['Tanggal'].min()
     tanggal_akhir =data['Tanggal'].max()
     ds = st.date_input("Tanggal Awal Historis",min_value=tanggal_awal, max_value= tanggal_akhir ,value = tanggal_akhir - datetime.timedelta(days=180))

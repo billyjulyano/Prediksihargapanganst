@@ -60,9 +60,10 @@ with tab1:
         latest_data = data['Tanggal'].max()
         pilihan_komoditas_prediksi = st.selectbox(
             "Pilih Jenis Pangan",
-            ("BerasPremium", "BerasMedium",),
+            ("Beras Premium", "Beras Medium",),
             placeholder="Pilih",
             )
+        pilihan_komoditas_prediksi = mf.real_key(pilihan_komoditas_prediksi)
         tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
         prediction_button = st.form_submit_button("Run prediction")
 
@@ -94,16 +95,29 @@ with tab2:
     else:
         updated_df = st.session_state.updated_data
         updated_df = mf.create_time_features(updated_df)
-        st.write(updated_df.tail(3))
+        st.data_editor(
+            st.session_state.updated_data.tail(3),
+            use_container_width=True,
+            disabled = True,
+            column_config={
+                "Tanggal": st.column_config.DatetimeColumn(
+                format="D MMMM YYYY"),
+                'ProduksiBeras': 'Produksi Beras',
+                'occasion': 'Hari Spesial',
+                'StokCipinang': 'Stok PIBC',
+                'BerasPremium': 'Beras Premium',
+                'BerasMedium':'Beras Medium'
+            })
 
         with st.form("prediksi data baru"):
             st.subheader('Set Parameter', divider='blue', anchor = '3')
             latest_data = updated_df['Tanggal'].max()
             pilihan_komoditas_prediksi = st.selectbox(
                 "Pilih Jenis Pangan",
-                ("BerasPremium", "BerasMedium",),
+                ("Beras Premium", "Beras Medium",),
                 placeholder="Pilih",
                 )
+            pilihan_komoditas_prediksi = mf.real_key(pilihan_komoditas_prediksi)
             tanggal_awal_prediksi = st.date_input("Tanggal Awal prediksi", value = latest_data + datetime.timedelta(days=1))
             prediction_button = st.form_submit_button("Run prediction")
 

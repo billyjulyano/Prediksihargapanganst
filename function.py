@@ -16,6 +16,17 @@ def excel_import(excel_name):
     dataframe['Tanggal'] = pd.to_datetime(dataframe['Tanggal'])
     return dataframe
 
+def real_key(key):
+    words_dict = {
+        'Beras Premium': 'BerasPremium',
+        'Beras Medium': 'BerasMedium',
+        'Stok Beras Cipinang': 'StokCipinang',
+        'Nilai Tukar $/Rp': 'Kurs',
+        'Produksi Beras':'ProduksiBeras' 
+    }
+    actual = words_dict[key]
+    return actual
+
 #interpolasi
 def interpolate_df(df):
     temp_df  = df.copy()
