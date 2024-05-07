@@ -51,7 +51,7 @@ if st.session_state['creds']:
                             'BerasPremium': [],
                             'BerasMedium': []})
         st.session_state.updated_data = original_df
-
+        
     # Show current data
     st.data_editor(
         st.session_state.updated_data.tail(7),
@@ -96,6 +96,7 @@ if st.session_state['creds']:
                             'BerasMedium': [st.session_state.input_df_form_BM]})
         st.session_state.updated_data = pd.concat([st.session_state.updated_data, row])
         st.session_state.updated_data.reset_index(drop=True, inplace=True)
+        print(st.session_state.updated_data)
 
     # Inputs listed within a form
     dfForm = st.form(key='dfForm', clear_on_submit=False)

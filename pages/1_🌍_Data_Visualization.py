@@ -33,8 +33,13 @@ df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 num_col_list = ['BerasPremium', 'BerasMedium','ProduksiBeras','StokCipinang','Kurs']
 df_merged = mf.to_integer(df_merged, num_col_list)
 
-data = mf.create_time_features(df_merged)
-
+if 'updated_data' not in st.session_state:
+    data = mf.create_time_features(df_merged)
+    print('this run')
+else:
+    data = mf.create_time_features(st.session_state.updated_data)
+    print('that run')
+# print(df_merged)
 st.title('Historical Price Visualization')   
 
 with st.form("price_history_form"):
