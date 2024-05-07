@@ -11,7 +11,7 @@ def menubar_template():
     pages_col[2].page_link("pages/2_🔐_Login_Page.py", label="🔐 Login Page")
     pages_col[3].page_link("pages/3_📊_Input_Page.py", label="📊 Input Page")
 
-    st.sidebar.header('Commodity Price Prediction Dashboard')
+    st.sidebar.title('Price Prediction Dashboard')
     st.sidebar.image('logogabungan.png')
 
     st.sidebar.write('')
