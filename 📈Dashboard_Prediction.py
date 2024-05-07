@@ -51,7 +51,10 @@ with tab1:
             placeholder="Pilih",
             )
         pilihan_komoditas_prediksi = mf.real_key(pilihan_komoditas_prediksi)
-        tanggal_awal_prediksi = st.date_input("Prediction start date:", value = latest_data + datetime.timedelta(days=1))
+        default_tgl_awal_prediksi = latest_data + datetime.timedelta(days=1)
+        max_date_pred = latest_data + datetime.timedelta(days=max_encoder_length)
+        tanggal_awal_prediksi = st.date_input("Prediction start date:", value = default_tgl_awal_prediksi, max_value = max_date_pred)
+        tanggal_awal_prediksi = tanggal_awal_prediksi - datetime.timedelta(days=1)
         prediction_button = st.form_submit_button("Run prediction")
 
     if prediction_button:
@@ -79,6 +82,8 @@ with tab1:
 
 with tab2:
     if 'updated_data' not in st.session_state:
+        st.write('update data first in update page')
+    elif 'updated_data' in st.session_state and st.session_state.updated_data['Tanggal'].max() == latest_data:
         st.write('update data first in update page')
     else:
         updated_df = st.session_state.updated_data
