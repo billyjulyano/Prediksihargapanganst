@@ -7,20 +7,7 @@ with open('style.css') as f:
     css = f.read()
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
-pages_col = st.columns(4)
-pages_col[0].page_link("📈Dashboard_Prediction.py", label="📈Dashboard Prediction")
-pages_col[1].page_link("pages/1_🌍_Data_Visualization.py", label="🌍 Data Visualization")
-pages_col[2].page_link("pages/2_🔐_Login_Page.py", label="🔐 Login Page")
-pages_col[3].page_link("pages/3_📊_Input_Page.py", label="📊 Input Page")
-
-st.sidebar.header('Dashboard Prediksi Harga Pangan')
-st.sidebar.image('logogabungan.png')
-
-st.sidebar.write('')
-st.sidebar.page_link("📈Dashboard_Prediction.py", label="📈Dashboard Prediction")
-st.sidebar.page_link("pages/1_🌍_Data_Visualization.py", label="🌍 Data Visualization")
-st.sidebar.page_link("pages/2_🔐_Login_Page.py", label="🔐 Login Page")
-st.sidebar.page_link("pages/3_📊_Input_Page.py", label="📊 Input Page")
+mf.menubar_template()
 
 st.session_state['creds'] = True
 
