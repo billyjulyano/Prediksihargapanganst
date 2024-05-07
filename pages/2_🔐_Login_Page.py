@@ -1,7 +1,7 @@
 from common import *
 
 #isi atas 
-st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
+st.set_page_config(page_title='Price Prediction Dashboard', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
 
 # css file
 with open('style.css') as f: #buka file style.css disimpan di variable f
