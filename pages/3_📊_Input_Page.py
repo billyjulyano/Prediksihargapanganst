@@ -1,26 +1,13 @@
 from common import *
 
-st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
+st.set_page_config(page_title='Price Prediction Dashboard', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
 
 # css file
 with open('style.css') as f:
     css = f.read()
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
-pages_col = st.columns(4)
-pages_col[0].page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
-pages_col[1].page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
-pages_col[2].page_link("pages/2_🔐_Login.py", label="🔐 Login")
-pages_col[3].page_link("pages/3_📊_Input_Harga.py", label="📊 Input Harga")
-
-st.sidebar.header('Dashboard Prediksi Harga Pangan')
-st.sidebar.image('logogabungan.png')
-
-st.sidebar.write('')
-st.sidebar.page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
-st.sidebar.page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
-st.sidebar.page_link("pages/2_🔐_Login.py", label="🔐 Login")
-st.sidebar.page_link("pages/3_📊_Input_Harga.py", label="📊 Input Harga")
+mf.menubar_template()
 
 st.session_state['creds'] = True
 
@@ -64,7 +51,7 @@ if st.session_state['creds']:
                             'BerasPremium': [],
                             'BerasMedium': []})
         st.session_state.updated_data = original_df
-
+        
     # Show current data
     st.data_editor(
         st.session_state.updated_data.tail(7),
@@ -109,6 +96,7 @@ if st.session_state['creds']:
                             'BerasMedium': [st.session_state.input_df_form_BM]})
         st.session_state.updated_data = pd.concat([st.session_state.updated_data, row])
         st.session_state.updated_data.reset_index(drop=True, inplace=True)
+        print(st.session_state.updated_data)
 
     # Inputs listed within a form
     dfForm = st.form(key='dfForm', clear_on_submit=False)

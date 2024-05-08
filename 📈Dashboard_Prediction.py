@@ -1,26 +1,13 @@
 from common import *
 
-st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
+st.set_page_config(page_title='Price Prediction Dashboard', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
 
 # css file
 with open('style.css') as f:
     css = f.read()
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
-pages_col = st.columns(4)
-pages_col[0].page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
-pages_col[1].page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
-pages_col[2].page_link("pages/2_🔐_Login.py", label="🔐 Login")
-pages_col[3].page_link("pages/3_📊_Input_Harga.py", label="📊 Input Harga")
-
-st.sidebar.header('Dashboard Prediksi Harga Pangan')
-st.sidebar.image('logogabungan.png')
-
-st.sidebar.write('')
-st.sidebar.page_link("📈Dashboard_Prediksi.py", label="📈Dashboard Prediksi")
-st.sidebar.page_link("pages/1_🌍_Visualisasi Data.py", label="🌍 Visualisasi Data")
-st.sidebar.page_link("pages/2_🔐_Login.py", label="🔐 Login")
-st.sidebar.page_link("pages/3_📊_Input_Harga.py", label="📊 Input Harga")
+mf.menubar_template()
 
 model = mf.model_import('samplemodel_ver2.ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
@@ -64,7 +51,10 @@ with tab1:
             placeholder="Pilih",
             )
         pilihan_komoditas_prediksi = mf.real_key(pilihan_komoditas_prediksi)
-        tanggal_awal_prediksi = st.date_input("Prediction start date:", value = latest_data + datetime.timedelta(days=1))
+        default_tgl_awal_prediksi = latest_data + datetime.timedelta(days=1)
+        max_date_pred = latest_data + datetime.timedelta(days=max_encoder_length)
+        tanggal_awal_prediksi = st.date_input("Prediction start date:", value = default_tgl_awal_prediksi, max_value = max_date_pred)
+        tanggal_awal_prediksi = tanggal_awal_prediksi - datetime.timedelta(days=1)
         prediction_button = st.form_submit_button("Run prediction")
 
     if prediction_button:
@@ -92,6 +82,8 @@ with tab1:
 
 with tab2:
     if 'updated_data' not in st.session_state:
+        st.write('update data first in update page')
+    elif 'updated_data' in st.session_state and st.session_state.updated_data['Tanggal'].max() == latest_data:
         st.write('update data first in update page')
     else:
         updated_df = st.session_state.updated_data
