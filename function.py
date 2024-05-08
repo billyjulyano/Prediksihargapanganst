@@ -12,7 +12,7 @@ def menubar_template():
     pages_col[3].page_link("pages/3_📊_Input_Page.py", label="📊 Input Page")
 
     st.sidebar.title('Price Prediction Dashboard')
-    st.sidebar.image('logoGabungan2.png')
+    st.sidebar.image('LogoGabungan2.png')
 
     st.sidebar.write('')
     st.sidebar.page_link("📈Dashboard_Prediction.py", label="📈Dashboard Prediction")
