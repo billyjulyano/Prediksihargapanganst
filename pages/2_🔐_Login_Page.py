@@ -1,7 +1,7 @@
 from common import *
 
 #isi atas 
-st.set_page_config(page_title='Price Prediction Dashboard', layout='wide', initial_sidebar_state='auto',page_icon="🌾")
+st.set_page_config(page_title='Prediksi Harga Pangan', layout='wide', initial_sidebar_state='auto',page_icon="👋")
 
 # css file
 with open('style.css') as f: #buka file style.css disimpan di variable f
@@ -30,7 +30,7 @@ with st.form("login_form"):
             st.success('Login successful!')
             sleep(0.5) #membuat program tidak melakukan apa apa, selama 5 detik, delay intinya
             st.session_state['creds'] = True
-            st.switch_page('pages/3_📊_Input_Harga.py')
+            st.switch_page('pages/3_📊_Input_Page.py')
         else:
             st.error('Invalid username or password')
 
