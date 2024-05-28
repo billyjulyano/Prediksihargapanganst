@@ -227,7 +227,7 @@ def create_chart_pred(df):
         .mark_line()
         .encode(
             x="Tanggal",
-            y = alt.Y('Harga Prediksi', scale=alt.Scale(domain=[lowest-10, highest+30])),
+            y = alt.Y('Harga Prediksi', scale=alt.Scale(domain=[lowest, highest])),
             )       
         )
     points = lines.transform_filter(hover).mark_circle(size=100)
