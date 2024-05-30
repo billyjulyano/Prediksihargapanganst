@@ -12,7 +12,7 @@ def menubar_template():
     pages_col[3].page_link("pages/3_📊_Input_Page.py", label="📊 Input Page")
 
     st.sidebar.title('Price Prediction Dashboard')
-    st.sidebar.image('LogoGabungan2.png')
+    st.sidebar.image('LogoGabungan3.png')
 
     st.sidebar.write('')
     st.sidebar.page_link("📈Dashboard_Prediction.py", label="📈Dashboard Prediction")
@@ -52,6 +52,7 @@ def interpolate_df(df):
     temp_df.set_index('Tanggal', inplace=True)
     temp_df = temp_df.resample('D').interpolate(method='polynomial', order=2)
     temp_df.reset_index(inplace=True)
+    temp_df['Tanggal'] = temp_df['Tanggal'] + pd.DateOffset(days=30)
     df = temp_df
     return df
 
@@ -66,25 +67,31 @@ def preprocess_occasion(df):
 
 #memproses kurs
 def preprocess_kurs(df):
-    df['Tanggal'] = pd.to_datetime(df['Tanggal'])
-    start_date = df['Tanggal'].min()
-    end_date = df['Tanggal'].max()
+    temp_df  = df.copy()
+    temp_df['Tanggal'] = pd.to_datetime(temp_df['Tanggal'])
+    start_date = temp_df['Tanggal'].min()
+    end_date = temp_df['Tanggal'].max()
     all_dates = pd.date_range(start=start_date, end=end_date)
 
-    df = df.set_index('Tanggal').reindex(all_dates).reset_index()
+    temp_df = temp_df.set_index('Tanggal').reindex(all_dates).reset_index()
 
-    df['Kurs Jual'] = df['Kurs Jual'].interpolate(method='polynomial', order=2)
-    df['Kurs Beli'] = df['Kurs Beli'].interpolate(method='polynomial', order=2)
-    df = df.rename(columns={'index': 'Tanggal'})
-    df = df.rename(columns={'Kurs Beli': 'Kurs'})
-    df = df.drop(columns=['Kurs Jual'])
+    temp_df['Kurs Jual'] = temp_df['Kurs Jual'].interpolate(method='polynomial', order=2)
+    temp_df['Kurs Beli'] = temp_df['Kurs Beli'].interpolate(method='polynomial', order=2)
+    temp_df = temp_df.rename(columns={'index': 'Tanggal'})
+    temp_df = temp_df.rename(columns={'Kurs Beli': 'Kurs'})
+    temp_df = temp_df.drop(columns=['Kurs Jual'])
+    temp_df['Tanggal'] = temp_df['Tanggal'] + pd.DateOffset(days=30)
+    df = temp_df
     return df
 
 
 def preprocess_pibc(df):
-    df['Tanggal'] = pd.to_datetime(df['Tanggal'])
-    df = df.drop(columns=['Pemasukan','Pengeluaran','Stok Akhir'])
-    df = df.rename(columns={'Stok Awal': 'StokCipinang'}) #mengubah nama dari stock awal (diexel) ke stockcipinang
+    temp_df = df.copy()
+    temp_df['Tanggal'] = pd.to_datetime(temp_df['Tanggal'])
+    temp_df = temp_df.drop(columns=['Pemasukan','Pengeluaran','Stok Akhir'])
+    temp_df = temp_df.rename(columns={'Stok Awal': 'StokCipinang'})  #mengubah nama dari stock awal (diexel) ke stockcipinang
+    temp_df['Tanggal'] = temp_df['Tanggal'] + pd.DateOffset(days=30)
+    df = temp_df
     return df
 
 #merubah flot menjadi integer
