@@ -12,3 +12,4 @@ warnings.filterwarnings("ignore")
 from datetime import timedelta #menghitung selisi suatu hari
 from time import sleep #memberikan waktu 
 from millify import prettify
+from pandas.tseries.offsets import DateOffset
