@@ -9,7 +9,7 @@ st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 mf.menubar_template()
 
-st.session_state['creds'] = True
+# st.session_state['creds'] = True
 
 if 'creds' not in st.session_state:
     st.session_state['creds'] = False

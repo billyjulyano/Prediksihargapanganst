@@ -13,7 +13,7 @@ def menubar_template():
     # pages_col[4].page_link("pages/4_🤔_random_code.py", label="📊 random Page")
 
     st.sidebar.title('Price Prediction Dashboard')
-    st.sidebar.image('LogoGabungan3.png')
+    st.sidebar.image('LogoGabungan2.png')
 
     st.sidebar.write('')
     st.sidebar.page_link("📈Dashboard_Prediction.py", label="📈Dashboard Prediction")
