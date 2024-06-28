@@ -7,3 +7,4 @@ openpyxl==3.1.2
 plost==0.2.5
 pytorch-forecasting==1.0.0
 millify==0.1.1
+git+https://github.com/Billl-11/pytorch-lightning-fork.git
