@@ -9,7 +9,7 @@ st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 mf.menubar_template()
 
-model = mf.model_import('samplemodel_ver2.ckpt') 
+model = mf.model_import('model_december_CD4_(3 juni).ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
 
 # import all data
@@ -36,7 +36,7 @@ df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 
 data = mf.create_time_features(df_merged)
 
-max_prediction_length = 30
+max_prediction_length = 31
 max_encoder_length = 90
 
 tab1, tab2 = st.tabs(['Original Data', 'Updated Data'])

@@ -134,7 +134,7 @@ def create_chart_price_historical(df):
         .mark_line()
         .encode(
             x="Tanggal",
-            y = alt.Y('harga', scale=alt.Scale(domain=[lowest-10, highest+30])),
+            y = alt.Y('harga', scale=alt.Scale(domain=[lowest, highest])),
             )       
         )
     points = lines.transform_filter(hover).mark_circle(size=100)
