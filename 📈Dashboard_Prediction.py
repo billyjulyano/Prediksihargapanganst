@@ -9,7 +9,8 @@ st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 mf.menubar_template()
 
-model = mf.model_import('model_december_CD4_(3 juni).ckpt') 
+# model = mf.model_import('model_december_CD4_(3 juni).ckpt') 
+model = mf.model_import('samplemodel_ver2.ckpt') 
 output_dict = model._hparams.embedding_labels['jenis']
 
 # import all data
