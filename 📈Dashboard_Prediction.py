@@ -37,7 +37,7 @@ df_merged = df_merged.drop_duplicates(subset=['Tanggal'], keep='first')
 
 data = mf.create_time_features(df_merged)
 
-max_prediction_length = 31
+max_prediction_length = 30
 max_encoder_length = 90
 
 tab1, tab2 = st.tabs(['Original Data', 'Updated Data'])
